@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "cs917-lab"
+version = "0.1.0"
+description = ""
+authors = ["Xanonymous <trusaidlin@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12 <3.13"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.292"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
