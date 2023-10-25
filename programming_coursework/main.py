@@ -55,7 +55,7 @@ class Importer:
 
         else:
             print(self.name, 'not found. Only (a, b, c or d)')
-            exit(1)
+            sys.exit(1)
 
 
 def main(data_: tuple[CryptoRecord]):
@@ -83,9 +83,7 @@ def main(data_: tuple[CryptoRecord]):
     with Importer(exercise_name) as pkg:
         # call the pre-defined entry interface method of the contextmanager.
         pkg.run(data_)
-
-        # show the ended message.
-        print(pkg, 'finished.')
+        sys.exit(0)
 
 
 def use_crypto_data_set() -> tuple[CryptoRecord]:
