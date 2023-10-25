@@ -68,8 +68,8 @@ def main(data_: tuple[CryptoRecord]):
     else:
         # get everything from user input and split into a list.
         requested_exercise_name = input(
-            'Please tell me which exercise you want to run '
-            'what part (a, b, c or d) ?: '
+            'Please tell me which exercise you want to run, '
+            '(a, b, c or d) ?: '
         ).split()
 
         # if user not provide the name of exercise to be run, show error message.
