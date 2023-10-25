@@ -11,6 +11,22 @@ def find_word() -> str:
     return random.choice(words)
 
 
+==\n ||     |\n ||\n ||\n ||\n ||\n/  \\")
+elif lives == 5:
+    print("=========\n ||     |\n ||     O\n ||\n ||\n ||\n/  \\")
+elif lives == 4:
+    print("=========\n ||     |\n ||     O\n ||     |\n ||\n ||\n/  \\")
+elif lives == 3:
+    print("=========\n ||     |\n ||    \O\n ||     |\n ||\n ||\n/  \\")
+elif lives == 2:
+    print("=========\n ||     |\n ||    \O/\n ||     |\n ||\n ||\n/  \\")
+elif lives == 1:
+    print("=========\n ||     |\n ||    \O/\n ||     |\n ||    /\n ||\n/  \\")
+elif lives == 0:
+    print(
+        "=========\n ||     |\n ||     O \n ||    /|\\\n ||    / \\\n ||\n/  \\"
+    )
+=======
 def draw_hangman(lives: int):
     os.system("clear")
     if lives == 6:
@@ -57,7 +73,7 @@ class Hangman:
                 return
             print("You have guessed this word !")
             return
-
+    
         del self.ans_dict[guess]
 
     def __make_hidden_word_struct(self):
