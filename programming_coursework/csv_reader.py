@@ -1,4 +1,5 @@
 from csv import DictReader
+from platform import python_version
 from typing import Final
 
 from model import CryptoRecord
@@ -47,5 +48,8 @@ class CryptoCompareCsvDto:
 
         for row in raw_csv:
             records.append(self.__from_row_to_crypto_compare_record(row))
+
+        # Sort the records by the time to enhance the performance of the binary search.
+        records.sort(key=lambda x: x.the_time)
 
         return tuple(records)
