@@ -20,7 +20,7 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
     end_date_utc = date_str_to_utc_number(end_date)
 
     return max(
-        [record for record in data_ if start_date_utc <= record.the_time <= end_date_utc],
+        (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.high
     ).high
 
@@ -43,7 +43,7 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
     # Fix the float number to 2 decimal places
     return round(
         min(
-            [record for record in data_ if start_date_utc <= record.the_time <= end_date_utc],
+            (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
             key=lambda x: x.low
         ).low, 2
     )
@@ -65,7 +65,7 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
     end_date_utc = date_str_to_utc_number(end_date)
 
     return max(
-        [record for record in data_ if start_date_utc <= record.the_time <= end_date_utc],
+        (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.volume_from
     ).volume_from
 
@@ -87,7 +87,7 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     end_date_utc = date_str_to_utc_number(end_date)
 
     highest_price_record = max(
-        [record for record in data_ if start_date_utc <= record.the_time <= end_date_utc],
+        (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.volume_to / x.volume_from
     )
 
@@ -110,10 +110,10 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
     # Fix the float number to 2 decimal places
     return round(
-        mean([
+        mean((
             record.volume_to / record.volume_from
             for record in data_ if start_date_utc <= record.the_time <= end_date_utc
-        ]), 2
+        )), 2
     )
 
 
