@@ -68,8 +68,8 @@ def main(data_: tuple[CryptoRecord]):
     else:
         # get everything from user input and split into a list.
         requested_exercise_name = input(
-            'Please tell me which exercise you want to run '
-            'what part (a, b, c or d) ?: '
+            'Please tell me which exercise you want to run, '
+            '(a, b, c or d) ?: '
         ).split()
 
         # if user not provide the name of exercise to be run, show error message.
@@ -93,4 +93,9 @@ def use_crypto_data_set() -> tuple[CryptoRecord]:
 
 if __name__ == '__main__':
     data = use_crypto_data_set()
-    main(data)
+
+    try:
+        main(data)
+    except KeyboardInterrupt:
+        print('\nProgram interrupted.')
+        sys.exit(0)
