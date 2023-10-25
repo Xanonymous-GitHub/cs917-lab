@@ -93,4 +93,9 @@ def use_crypto_data_set() -> tuple[CryptoRecord]:
 
 if __name__ == '__main__':
     data = use_crypto_data_set()
-    main(data)
+
+    try:
+        main(data)
+    except KeyboardInterrupt:
+        print('\nProgram interrupted.')
+        sys.exit(0)
