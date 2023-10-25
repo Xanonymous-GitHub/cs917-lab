@@ -1,13 +1,45 @@
+import os
 import random
 import sys
-import os
+
+
+def find_word() -> str:
+    words = []
+    with open("./words", "r") as f:
+        for word in f:
+            words.append(word.strip())
+    return random.choice(words)
+
+
+def draw_hangman(lives: int):
+    os.system("clear")
+    if lives == 6:
+        print("=========\n ||     |\n ||\n ||\n ||\n ||\n/  \\")
+    elif lives == 5:
+        print("=========\n ||     |\n ||     O\n ||\n ||\n ||\n/  \\")
+    elif lives == 4:
+        print("=========\n ||     |\n ||     O\n ||     |\n ||\n ||\n/  \\")
+    elif lives == 3:
+        print("=========\n ||     |\n ||    \O\n ||     |\n ||\n ||\n/  \\")
+    elif lives == 2:
+        print("=========\n ||     |\n ||    \O/\n ||     |\n ||\n ||\n/  \\")
+    elif lives == 1:
+        print("=========\n ||     |\n ||    \O/\n ||     |\n ||    /\n ||\n/  \\")
+    elif lives == 0:
+        print(
+            "=========\n ||     |\n ||     O \n ||    /|\\\n ||    / \\\n ||\n/  \\"
+        )
+
+
+def win_game():
+    print("you win!")
 
 
 class Hangman:
     ans_dict = {}
 
     def __init__(self):
-        self.hidden_word = self.find_word()
+        self.hidden_word = find_word()
         self.__make_hidden_word_struct()
         self.blank_string = "-" * len(self.hidden_word)
         self.lives = 6
@@ -17,7 +49,7 @@ class Hangman:
         if guess not in self.ans_dict:
             if guess not in self.hidden_word:
                 self.lives -= 1
-                self.draw_hangman(self.lives)
+                draw_hangman(self.lives)
                 if self.lives == 0:
                     print("You Die!")
                     print(f"Ans is: {self.hidden_word}")
@@ -27,13 +59,6 @@ class Hangman:
             return
 
         del self.ans_dict[guess]
-
-    def find_word(self) -> str:
-        words = []
-        with open("./words", "r") as f:
-            for word in f:
-                words.append(word.strip())
-        return random.choice(words)
 
     def __make_hidden_word_struct(self):
         for i, c in enumerate(self.hidden_word):
@@ -47,28 +72,6 @@ class Hangman:
                 status[i] = "-"
         print("".join(status))
 
-    def draw_hangman(self, lives: int):
-        os.system("clear")
-        if lives == 6:
-            print("=========\n ||     |\n ||\n ||\n ||\n ||\n/  \\")
-        elif lives == 5:
-            print("=========\n ||     |\n ||     O\n ||\n ||\n ||\n/  \\")
-        elif lives == 4:
-            print("=========\n ||     |\n ||     O\n ||     |\n ||\n ||\n/  \\")
-        elif lives == 3:
-            print("=========\n ||     |\n ||    \O\n ||     |\n ||\n ||\n/  \\")
-        elif lives == 2:
-            print("=========\n ||     |\n ||    \O/\n ||     |\n ||\n ||\n/  \\")
-        elif lives == 1:
-            print("=========\n ||     |\n ||    \O/\n ||     |\n ||    /\n ||\n/  \\")
-        elif lives == 0:
-            print(
-                "=========\n ||     |\n ||     O \n ||    /|\\\n ||    / \\\n ||\n/  \\"
-            )
-
-    def win_game(self):
-        print("you win!")
-
     def play(self):
         while True:
             try:
@@ -76,7 +79,7 @@ class Hangman:
                 self.process_guess(guess)
                 self.__draw_guess_status()
                 if len(self.ans_dict) == 0:
-                    self.win_game()
+                    win_game()
                     break
             except KeyboardInterrupt:
                 print("\nGame interrupted")
