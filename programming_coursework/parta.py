@@ -4,7 +4,7 @@ from model import CryptoRecord
 from utils import date_str_to_utc_number, redirect_to_main
 
 
-def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
+def get_highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
     return a positive or negative floating point number,
@@ -25,7 +25,7 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
     ).high
 
 
-def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
+def get_lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
     return a positive or negative floating point number (accurate to 2 decimal places),
@@ -49,7 +49,7 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
     )
 
 
-def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
+def get_max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
     return a floating point number that is the maximal daily amount of exchanged BTC currency of a single day
@@ -70,7 +70,7 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
     ).volume_from
 
 
-def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
+def get_best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
     return the highest daily average price of a single BTC coin in USD within the given period.
@@ -94,7 +94,7 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     return highest_price_record.volume_to / highest_price_record.volume_from
 
 
-def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
+def get_moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Should return the average BTC currency price over the given period of time (accurate to 2 decimal places).
     The average price of a single day is calculated by :func:`best_avg_price`.
@@ -118,8 +118,7 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
 
 def run(data_: tuple[CryptoRecord]) -> None:
-    print(moving_average(data_, "01/01/2017", "31/12/2017"))
-
+    print(get_moving_average(data_, "01/01/2017", "31/12/2017"))
 
 if __name__ == '__main__':
     redirect_to_main('a')
