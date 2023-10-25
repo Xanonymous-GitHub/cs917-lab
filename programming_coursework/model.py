@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from programming_coursework.utils import ValidatableDataClass, JsonSerializable
+from utils import ValidatableDataClass, JsonSerializable
 
 __all__ = ["CryptoRecord"]
 

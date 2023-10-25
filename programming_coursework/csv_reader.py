@@ -1,7 +1,8 @@
+from platform import python_version
 from csv import DictReader
 from typing import Final
 
-from programming_coursework.models import CryptoRecord
+from model import CryptoRecord
 
 CSV = tuple[dict[str, str]]
 
@@ -24,7 +25,11 @@ class CryptoCompareCsvDto:
 
     def __read_csv_rows(self) -> CSV:
         with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
-            reader = DictReader[dict[str, str]](file)
+            if python_version() >= '3.12':
+                # FIXME: Remove this when python 3.12 is well-known and widely used.
+                reader = DictReader[dict[str, str]](file)
+            else:
+                reader = DictReader(file)
             return tuple([r for r in reader])
 
     def __from_row_to_crypto_compare_record(self, row: dict[str, ...]) -> CryptoRecord:
