@@ -3,7 +3,10 @@ from typing import Final
 
 from model import CryptoRecord
 
-CSV = tuple[dict[str, str]]
+    def __read_csv_rows(self) -> CSV:
+        with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
+            reader = DictReader(file)
+            return tuple([r for r in reader])
 
 __all__ = ["CryptoCompareCsvDto"]
 
