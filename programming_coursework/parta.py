@@ -118,7 +118,14 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
 
 def run(data_: tuple[CryptoRecord]) -> None:
-    print(moving_average(data_, "01/01/2017", "31/12/2017"))
+    start_date = '01/01/2015'
+    end_date = '31/12/2023'
+
+    print(f"{highest_price.__name__}: {highest_price(data_, start_date, end_date)}")
+    print(f"{lowest_price.__name__}: {lowest_price(data_, start_date, end_date)}")
+    print(f"{max_volume.__name__}: {max_volume(data_, start_date, end_date)}")
+    print(f"{best_avg_price.__name__}: {best_avg_price(data_, start_date, end_date)}")
+    print(f"{moving_average.__name__}: {moving_average(data_, start_date, end_date)}")
 
 
 if __name__ == '__main__':
