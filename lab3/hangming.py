@@ -3,7 +3,7 @@ import random
 import sys
 
 
-def find_word() -> str:
+def get_random_word() -> str:
     words = []
     with open("./words", "r") as f:
         for word in f:
@@ -39,7 +39,7 @@ class Hangman:
     ans_dict = {}
 
     def __init__(self):
-        self.hidden_word = find_word()
+        self.hidden_word = get_random_word()
         self.__make_hidden_word_struct()
         self.blank_string = "-" * len(self.hidden_word)
         self.lives = 6
