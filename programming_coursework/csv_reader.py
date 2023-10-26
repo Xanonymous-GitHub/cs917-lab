@@ -24,24 +24,32 @@ class CryptoCompareCsvDto:
         self.__csv_file_path = csv_file_path
 
     def __read_csv_rows(self) -> CSV:
-        with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
-            if python_version() >= '3.12':
-                # FIXME: Remove this when python 3.12 is well-known and widely used.
-                reader = DictReader[dict[str, str]](file)
-            else:
-                reader = DictReader(file)
-            return tuple([r for r in reader])
+        try:
+            with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
+                if python_version() >= '3.12':
+                    # FIXME: Remove this when python 3.12 is well-known and widely used.
+                    reader = DictReader[dict[str, str]](file)
+                else:
+                    reader = DictReader(file)
+                return tuple([r for r in reader])
+        except FileNotFoundError as e:
+            print('Error: dataset not found')
+            raise e
 
     def __from_row_to_crypto_compare_record(self, row: dict[str, ...]) -> CryptoRecord:
-        return CryptoRecord(
-            the_time=int(row[self.TIME_COL_NAME]),
-            high=float(row[self.HIGH_COL_NAME]),
-            low=float(row[self.LOW_COL_NAME]),
-            open_amount=float(row[self.OPEN_COL_NAME]),
-            close_amount=float(row[self.CLOSE_COL_NAME]),
-            volume_from=float(row[self.VOLUME_FROM_COL_NAME]),
-            volume_to=float(row[self.VOLUME_TO_COL_NAME]),
-        )
+        try:
+            return CryptoRecord(
+                the_time=int(row[self.TIME_COL_NAME]),
+                high=float(row[self.HIGH_COL_NAME]),
+                low=float(row[self.LOW_COL_NAME]),
+                open_amount=float(row[self.OPEN_COL_NAME]),
+                close_amount=float(row[self.CLOSE_COL_NAME]),
+                volume_from=float(row[self.VOLUME_FROM_COL_NAME]),
+                volume_to=float(row[self.VOLUME_TO_COL_NAME]),
+            )
+        except KeyError as e:
+            print('Error: requested column is missing from dataset')
+            raise e
 
     def to_crypto_records(self) -> tuple[CryptoRecord]:
         raw_csv: Final[CSV] = self.__read_csv_rows()
