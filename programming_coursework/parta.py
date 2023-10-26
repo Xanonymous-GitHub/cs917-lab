@@ -1,14 +1,7 @@
-import unittest
 from statistics import mean
 
 from model import CryptoRecord
-from testdata.parta import (
-    highest_price_test_data,
-    lowest_price_test_data,
-    max_volume_test_data,
-    best_avg_value_test_data,
-    moving_average_test_data,
-)
+from testdata.parta import *
 from tester import Tester
 from utils import date_str_to_utc_number, redirect_to_main
 
@@ -126,7 +119,7 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     )
 
 
-def run_highest_price_test(tester, data):
+def test_highest_price(tester, data):
     for test in highest_price_test_data:
         tester.assertEqual(
             highest_price(data, test['start_date'], test['end_date']),
@@ -134,7 +127,7 @@ def run_highest_price_test(tester, data):
         )
 
 
-def run_lowest_price_test(tester, data):
+def test_lowest_price(tester, data):
     for test in lowest_price_test_data:
         tester.assertEqual(
             lowest_price(data, test['start_date'], test['end_date']),
@@ -142,7 +135,7 @@ def run_lowest_price_test(tester, data):
         )
 
 
-def run_max_volume_test(tester, data):
+def test_max_volume(tester, data):
     for test in max_volume_test_data:
         tester.assertEqual(
             max_volume(data, test['start_date'], test['end_date']),
@@ -150,7 +143,7 @@ def run_max_volume_test(tester, data):
         )
 
 
-def run_best_avg_value_test(tester, data):
+def test_best_avg_value(tester, data):
     for test in best_avg_value_test_data:
         tester.assertEqual(
             best_avg_price(data, test['start_date'], test['end_date']),
@@ -158,7 +151,7 @@ def run_best_avg_value_test(tester, data):
         )
 
 
-def run_moving_average_test(tester, data):
+def test_moving_average(tester, data):
     for test in moving_average_test_data:
         tester.assertEqual(
             moving_average(data, test['start_date'], test['end_date']),
@@ -167,16 +160,15 @@ def run_moving_average_test(tester, data):
 
 
 def run(data_: tuple[CryptoRecord]) -> None:
-    suite = unittest.TestSuite()
-    suite.addTests((
-        Tester(original_data=data_, test_func=run_highest_price_test),
-        Tester(original_data=data_, test_func=run_lowest_price_test),
-        Tester(original_data=data_, test_func=run_max_volume_test),
-        Tester(original_data=data_, test_func=run_best_avg_value_test),
-        Tester(original_data=data_, test_func=run_moving_average_test),
-    ))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
+    Tester(
+        'part A',
+        data_,
+        test_highest_price,
+        test_lowest_price,
+        test_max_volume,
+        test_best_avg_value,
+        test_moving_average,
+    ).run()
 
 
 if __name__ == '__main__':
