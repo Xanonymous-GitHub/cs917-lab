@@ -11,8 +11,7 @@ def calculate_short_term_moving_average(crypto_data: tuple[CryptoRecord], start_
 
 
 def calculate_long_term_moving_average(crypto_data: tuple[CryptoRecord], start_date_str: str, end_date_str: str) -> dict:
-    return __moving_avg_with_scope(10, data_, start_date, end_date)
-
+    return calculate_moving_average_with_scope(10, crypto_data, start_date_str, end_date_str)
 
 # find_buy_list(short_avg_dict, long_avg_dict) -> dict
 # data: the data from a data_source file
@@ -41,7 +40,7 @@ def calculate_crossover_points(data_: tuple[CryptoRecord], start_date: str, end_
     return None
 
 
-def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
+def calculate_moving_average_with_scope(scope: int, crypto_data: tuple[CryptoRecord], start_date_str: str, end_date_str: str) -> dict[int, float]:
     """
         Takes the dataset with the start and end dates,
         and it calculates the moving average with time window `scope` for all the dates within the given range.
