@@ -6,8 +6,8 @@ from tester import Tester, use_validated_date
 from utils import redirect_to_main
 
 
-def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
-    return __moving_avg_with_scope(3, data_, start_date, end_date)
+def calculate_short_term_moving_average(crypto_data: tuple[CryptoRecord], start_date_str: str, end_date_str: str) -> dict[int, float]:
+    return calculate_moving_average_with_scope(3, crypto_data, start_date_str, end_date_str)
 
 
 def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict:
@@ -102,8 +102,8 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
     return result
 
 
-def run(data_: tuple[CryptoRecord]) -> None:
-    pprint(moving_avg_short(data_, '01/01/2015', '30/04/2015'))
+def run(crypto_data: tuple[CryptoRecord]) -> None:
+    pprint(calculate_short_term_moving_average(crypto_data, '01/01/2015', '30/04/2015'))
     Tester(
         'part C',
         data_,
