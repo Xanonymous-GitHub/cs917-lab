@@ -6,20 +6,11 @@ from tester import Tester, use_validated_date
 from utils import redirect_to_main
 
 
-def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
-    return __moving_avg_with_scope(3, data_, start_date, end_date)
-
-
-def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict:
-    return __moving_avg_with_scope(10, data_, start_date, end_date)
-
-
 # find_buy_list(short_avg_dict, long_avg_dict) -> dict
 # data: the data from a data_source file
 # start_date: string in "dd/mm/yyyy" format
 # start_date: string in "dd/mm/yyyy" format
 def find_buy_list(short_avg_dict: dict, long_avg_dict: dict) -> dict:
-    # replace None with an appropriate return value
     return None
 
 
@@ -28,7 +19,6 @@ def find_buy_list(short_avg_dict: dict, long_avg_dict: dict) -> dict:
 # start_date: string in "dd/mm/yyyy" format
 # start_date: string in "dd/mm/yyyy" format
 def find_sell_list(short_avg_dict, long_avg_dict):
-    # replace None with an appropriate return value
     return None
 
 
@@ -37,7 +27,6 @@ def find_sell_list(short_avg_dict, long_avg_dict):
 # start_date: string in "dd/mm/yyyy" format
 # start_date: string in "dd/mm/yyyy" format
 def crossover_method(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> tuple[list, list]:
-    # replace None with an appropriate return value
     return None
 
 
