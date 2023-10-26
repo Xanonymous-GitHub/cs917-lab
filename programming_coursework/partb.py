@@ -47,7 +47,7 @@ def test_date_out_of_range(tester: TestCase, data: tuple[CryptoRecord]) -> None:
         if not (earliest_time <= date_utc <= latest_time):
             msg = 'Error: date value is out of range'
             print(msg)
-            raise DateOutOfRangeError
+            raise DateOutOfRangeError()
 
     with tester.assertRaises(DateOutOfRangeError):
         validate_date_range('01/01/2000')

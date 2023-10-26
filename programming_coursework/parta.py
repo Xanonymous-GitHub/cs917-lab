@@ -1,11 +1,10 @@
 from statistics import mean
 from unittest import TestCase
 
-from err import StartDateAfterEndDateError
 from model import CryptoRecord
 from testdata.parta import *
-from tester import Tester
-from utils import date_str_to_utc_number, redirect_to_main
+from tester import Tester, use_validated_date
+from utils import redirect_to_main
 
 
 def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
@@ -14,19 +13,16 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
     return a positive or negative floating point number,
     that is the highest price of the BTC currency in bitcoin within the given period.
 
-    :param data_ the data from a data_source file
-    :param start_date string in "dd/mm/yyyy" format
-    :param end_date string in "dd/mm/yyyy" format
-    :return: the highest price in the given date range
+    Args:
+        data_: the data from a data_source file
+        start_date: string in "dd/mm/yyyy" format
+        end_date: string in "dd/mm/yyyy" format
+
+    Returns:
+        the highest price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -40,19 +36,16 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
     return a positive or negative floating point number (accurate to 2 decimal places),
     that is the lowest price of the BTC currency in bitcoin within the given period.
 
-    :param data_ the data from a data_source file
-    :param start_date string in "dd/mm/yyyy" format
-    :param end_date string in "dd/mm/yyyy" format
-    :return: the lowest price in the given date range
+    Args:
+        data_: the data from a data_source file
+        start_date: string in "dd/mm/yyyy" format
+        end_date: string in "dd/mm/yyyy" format
+
+    Returns:
+        the lowest price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     # Fix the float number to 2 decimal places
     return round(
@@ -69,19 +62,16 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
     return a floating point number that is the maximal daily amount of exchanged BTC currency of a single day
     within the given period.
 
-    :param data_ the data from a data_source file
-    :param start_date string in "dd/mm/yyyy" format
-    :param end_date string in "dd/mm/yyyy" format
-    :return: the maximum volume in the given date range
+    Args:
+        data_: the data from a data_source file
+        start_date: string in "dd/mm/yyyy" format
+        end_date: string in "dd/mm/yyyy" format
+
+    Returns:
+        the maximal daily amount of exchanged BTC currency of a single day in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -96,19 +86,16 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     To calculate the average price of a single BTC coin of a day,
     we take the ratio between the total volume in USD and the total volume in BTC (the former divided by the latter).
 
-    :param data_ the data from a data_source file
-    :param start_date string in "dd/mm/yyyy" format
-    :param end_date string in "dd/mm/yyyy" format
-    :return: the average price in the given date range
+    Args:
+        data_: the data from a data_source file
+        start_date: string in "dd/mm/yyyy" format
+        end_date: string in "dd/mm/yyyy" format
+
+    Returns:
+        the highest daily average price of a single BTC coin in USD in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     highest_price_record = max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -123,27 +110,23 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     Should return the average BTC currency price over the given period of time (accurate to 2 decimal places).
     The average price of a single day is calculated by :func:`best_avg_price`.
 
-    :param data_ the data from a data_source file
-    :param start_date string in "dd/mm/yyyy" format
-    :param end_date string in "dd/mm/yyyy" format
-    :return: the moving average price in the given date range
+    Args:
+        data_: the data from a data_source file
+        start_date: string in "dd/mm/yyyy" format
+        end_date: string in "dd/mm/yyyy" format
+
+    Returns:
+        the average BTC currency price over the given period of time
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    frame = [
+        record.volume_to / record.volume_from
+        for record in data_ if start_date_utc <= record.the_time <= end_date_utc
+    ]
 
-    # Fix the float number to 2 decimal places
-    return round(
-        mean((
-            record.volume_to / record.volume_from
-            for record in data_ if start_date_utc <= record.the_time <= end_date_utc
-        )), 2
-    )
+    return round(mean(frame) if len(frame) > 0 else 0, 2)
 
 
 def test_highest_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:

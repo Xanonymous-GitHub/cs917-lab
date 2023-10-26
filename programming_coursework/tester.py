@@ -2,8 +2,10 @@ import unittest
 from collections.abc import Callable
 from typing import Final
 
+from err import StartDateAfterEndDateError
 from model import CryptoRecord
 from utils.colors import ConsoleColorWrapper, ConsoleColors, wrap_with_color
+from utils.timing import date_str_to_utc_number
 
 __all__ = ('Tester', None)
 
@@ -57,3 +59,23 @@ class _UnitTester(unittest.TestCase):
             self.fail(
                 wrap_with_color(ConsoleColors.RED, f"{self.__test_func.__name__} failed.")
             )
+
+
+def use_validated_date(start_date: str, end_date: str) -> tuple[int, int]:
+    """
+    Validate the date and return the UTC number of the date.
+
+    :param start_date: string in "dd/mm/yyyy" format
+    :param end_date: string in "dd/mm/yyyy" format
+    :return: tuple of start date and end date in UTC number
+    """
+
+    start_date_utc = date_str_to_utc_number(start_date)
+    end_date_utc = date_str_to_utc_number(end_date)
+
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
+
+    return start_date_utc, end_date_utc
