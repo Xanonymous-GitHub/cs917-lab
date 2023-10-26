@@ -24,10 +24,13 @@ from model import CryptoRecord
         self.__csv_file_path = csv_file_path
 
     def __read_csv_rows(self) -> CSV:
-        try:
-            with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
-                reader = DictReader(file)
-                return tuple([r for r in reader])
+    try:
+        with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
+            reader = DictReader(file)
+            return tuple([r for r in reader])
+    except FileNotFoundError as e:
+        print('Error: dataset not found')
+        raise e
         except FileNotFoundError as e:
             print('Error: dataset not found')
             raise e
