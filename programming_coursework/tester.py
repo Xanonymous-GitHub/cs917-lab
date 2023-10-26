@@ -21,7 +21,7 @@ class Tester(unittest.TestCase):
 
     # FIXME: do not use runTest to specify the test function.
     def runTest(self):
-        print(f"\n{self.__test_func.__name__}...")
+        print(f"\n-> {self.__test_func.__name__}...")
         try:
             self.__test_func(self, self.__original_data)
             print(wrap_with_color(ConsoleColors.GREEN, "[ PASSED ]"))
