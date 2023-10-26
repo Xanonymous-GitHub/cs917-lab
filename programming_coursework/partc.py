@@ -7,12 +7,33 @@ from utils import redirect_to_main
 
 
 def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
+    """
+    Calculates the short-term moving average of cryptocurrency data.
+    
+    Args:
+        data_ (tuple[CryptoRecord]): The cryptocurrency data.
+        start_date (str): The start date in "dd/mm/yyyy" format.
+        end_date (str): The end date in "dd/mm/yyyy" format.
+        
+    Returns:
+        dict[int, float]: A dictionary with dates as keys and the calculated short-term moving averages as values.
+    """
     return __moving_avg_with_scope(3, data_, start_date, end_date)
 
 
 def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict:
+    """
+    Calculates the long-term moving average of cryptocurrency data.
+    
+    Args:
+        data_ (tuple[CryptoRecord]): The cryptocurrency data.
+        start_date (str): The start date in "dd/mm/yyyy" format.
+        end_date (str): The end date in "dd/mm/yyyy" format.
+        
+    Returns:
+        dict[int, float]: A dictionary with dates as keys and the calculated long-term moving averages as values.
+    """
     return __moving_avg_with_scope(10, data_, start_date, end_date)
-
 
 # find_buy_list(short_avg_dict, long_avg_dict) -> dict
 # data: the data from a data_source file
@@ -103,12 +124,17 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
 
 
 def run(data_: tuple[CryptoRecord]) -> None:
+    """
+    Runs the program, calculating and printing the short-term moving average of cryptocurrency data.
+    
+    Args:
+        data_ (tuple[CryptoRecord]): The cryptocurrency data.
+    """
     pprint(moving_avg_short(data_, '01/01/2015', '30/04/2015'))
     Tester(
         'part C',
         data_,
     ).run()
-
 
 if __name__ == '__main__':
     redirect_to_main('c')
