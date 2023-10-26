@@ -16,7 +16,7 @@ def redirect_to_main(origin_module_identifier: str) -> None:
         print(f"Warning: Please run main.py and specify '{origin_module_identifier}' to run this part.")
         print(f"For example, 'python3 main.py {origin_module_identifier}'")
         print("DO NOT directly run this file.")
-        print("=" * 60)
+        print("=" * 60 + "\033[0m")
 
     command = [sys.executable, 'main.py', origin_module_identifier]
 
