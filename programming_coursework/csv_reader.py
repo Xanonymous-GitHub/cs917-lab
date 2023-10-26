@@ -1,5 +1,4 @@
 from csv import DictReader
-from platform import python_version
 from typing import Final
 
 from model import CryptoRecord
@@ -7,7 +6,6 @@ from model import CryptoRecord
 CSV = tuple[dict[str, str]]
 
 __all__ = ["CryptoCompareCsvDto"]
-
 
 class CryptoCompareCsvDto:
     __csv_file_path: Final[str]
@@ -26,11 +24,7 @@ class CryptoCompareCsvDto:
     def __read_csv_rows(self) -> CSV:
         try:
             with open(self.__csv_file_path, mode='r', newline='', encoding='utf-8-sig') as file:
-                if python_version() >= '3.12':
-                    # FIXME: Remove this when python 3.12 is well-known and widely used.
-                    reader = DictReader[dict[str, str]](file)
-                else:
-                    reader = DictReader(file)
+                reader = DictReader(file)
                 return tuple([r for r in reader])
         except FileNotFoundError as e:
             print('Error: dataset not found')
