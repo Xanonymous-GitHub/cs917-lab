@@ -106,13 +106,12 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
     start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
-    # Fix the float number to 2 decimal places
-    return round(
-        mean((
-            record.volume_to / record.volume_from
-            for record in data_ if start_date_utc <= record.the_time <= end_date_utc
-        )), 2
-    )
+    frame = [
+        record.volume_to / record.volume_from
+        for record in data_ if start_date_utc <= record.the_time <= end_date_utc
+    ]
+
+    return round(mean(frame) if len(frame) > 0 else 0, 2)
 
 
 def test_highest_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:
