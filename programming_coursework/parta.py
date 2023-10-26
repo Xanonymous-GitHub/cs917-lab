@@ -1,6 +1,7 @@
 from statistics import mean
 from unittest import TestCase
 
+from err import StartDateAfterEndDateError
 from model import CryptoRecord
 from testdata.parta import highest_price_test_data, lowest_price_test_data, max_volume_test_data, best_avg_value_test_data, moving_average_test_data
 from tester import Tester
@@ -22,6 +23,11 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
     start_date_utc = date_str_to_utc_number(start_date)
     end_date_utc = date_str_to_utc_number(end_date)
 
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
+
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.high
@@ -42,6 +48,11 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
 
     start_date_utc = date_str_to_utc_number(start_date)
     end_date_utc = date_str_to_utc_number(end_date)
+
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
 
     # Fix the float number to 2 decimal places
     return round(
@@ -67,6 +78,11 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
     start_date_utc = date_str_to_utc_number(start_date)
     end_date_utc = date_str_to_utc_number(end_date)
 
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
+
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.volume_from
@@ -89,6 +105,11 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     start_date_utc = date_str_to_utc_number(start_date)
     end_date_utc = date_str_to_utc_number(end_date)
 
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
+
     highest_price_record = max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
         key=lambda x: x.volume_to / x.volume_from
@@ -110,6 +131,11 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
     start_date_utc = date_str_to_utc_number(start_date)
     end_date_utc = date_str_to_utc_number(end_date)
+
+    if start_date_utc > end_date_utc:
+        exception = StartDateAfterEndDateError()
+        print(exception)
+        raise exception
 
     # Fix the float number to 2 decimal places
     return round(
