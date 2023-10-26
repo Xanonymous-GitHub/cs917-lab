@@ -64,17 +64,17 @@ def crossover_method(data_: tuple[CryptoRecord], start_date: str, end_date: str)
 
 def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
-        Takes the dataset with the start and end dates,
-        and it calculates the moving average with time window `scope` for all the dates within the given range.
-        The results are stored in a dictionary with key = date, and value = calculated short average.
-        Args:
-            data_: the data from a data_source file
-            start_date: string in "dd/mm/yyyy" format
-            end_date: string in "dd/mm/yyyy" format
-
-        Returns:
-            the moving average with time window `scope` for all the dates within the given range
-        """
+    Calculates the moving average of cryptocurrency data for a given scope.
+    
+    Args:
+        scope (int): The time window for which to calculate the moving average.
+        data_ (tuple[CryptoRecord]): The cryptocurrency data.
+        start_date (str): The start date in "dd/mm/yyyy" format.
+        end_date (str): The end date in "dd/mm/yyyy" format.
+        
+    Returns:
+        dict[int, float]: A dictionary with dates as keys and the calculated moving averages as values.
+    """
 
     if scope < 0:
         raise ValueError('scope should greater than or equal to 0')
