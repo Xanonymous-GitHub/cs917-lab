@@ -1,7 +1,7 @@
 from statistics import mean
 
 from model import CryptoRecord
-from testdata.parta import *
+from testdata.parta import highest_price_test_data, lowest_price_test_data, max_volume_test_data, best_avg_value_test_data, moving_average_test_data
 from tester import Tester
 from utils import date_str_to_utc_number, redirect_to_main
 
