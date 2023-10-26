@@ -10,7 +10,7 @@ def calculate_short_term_moving_average(crypto_data: tuple[CryptoRecord], start_
     return calculate_moving_average_with_scope(3, crypto_data, start_date_str, end_date_str)
 
 
-def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict:
+def calculate_long_term_moving_average(crypto_data: tuple[CryptoRecord], start_date_str: str, end_date_str: str) -> dict:
     return __moving_avg_with_scope(10, data_, start_date, end_date)
 
 
