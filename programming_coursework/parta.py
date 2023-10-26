@@ -1,11 +1,10 @@
 from statistics import mean
 from unittest import TestCase
 
-from err import StartDateAfterEndDateError
 from model import CryptoRecord
 from testdata.parta import *
-from tester import Tester
-from utils import date_str_to_utc_number, redirect_to_main
+from tester import Tester, use_validated_date
+from utils import redirect_to_main
 
 
 def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
@@ -20,13 +19,7 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
     :return: the highest price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -46,13 +39,7 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
     :return: the lowest price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     # Fix the float number to 2 decimal places
     return round(
@@ -75,13 +62,7 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
     :return: the maximum volume in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -102,13 +83,7 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     :return: the average price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     highest_price_record = max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
@@ -129,13 +104,7 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     :return: the moving average price in the given date range
     """
 
-    start_date_utc = date_str_to_utc_number(start_date)
-    end_date_utc = date_str_to_utc_number(end_date)
-
-    if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+    start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
 
     # Fix the float number to 2 decimal places
     return round(
