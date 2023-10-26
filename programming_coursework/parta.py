@@ -1,6 +1,15 @@
+import unittest
 from statistics import mean
 
 from model import CryptoRecord
+from testdata.parta import (
+    highest_price_test_data,
+    lowest_price_test_data,
+    max_volume_test_data,
+    best_avg_value_test_data,
+    moving_average_test_data,
+)
+from tester import Tester
 from utils import date_str_to_utc_number, redirect_to_main
 
 
@@ -117,15 +126,57 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     )
 
 
-def run(data_: tuple[CryptoRecord]) -> None:
-    start_date = '01/01/2015'
-    end_date = '31/12/2023'
+def run_highest_price_test(tester, data):
+    for test in highest_price_test_data:
+        tester.assertEqual(
+            highest_price(data, test['start_date'], test['end_date']),
+            test['expected_result']
+        )
 
-    print(f"{highest_price.__name__}: {highest_price(data_, start_date, end_date)}")
-    print(f"{lowest_price.__name__}: {lowest_price(data_, start_date, end_date)}")
-    print(f"{max_volume.__name__}: {max_volume(data_, start_date, end_date)}")
-    print(f"{best_avg_price.__name__}: {best_avg_price(data_, start_date, end_date)}")
-    print(f"{moving_average.__name__}: {moving_average(data_, start_date, end_date)}")
+
+def run_lowest_price_test(tester, data):
+    for test in lowest_price_test_data:
+        tester.assertEqual(
+            lowest_price(data, test['start_date'], test['end_date']),
+            test['expected_result']
+        )
+
+
+def run_max_volume_test(tester, data):
+    for test in max_volume_test_data:
+        tester.assertEqual(
+            max_volume(data, test['start_date'], test['end_date']),
+            test['expected_result']
+        )
+
+
+def run_best_avg_value_test(tester, data):
+    for test in best_avg_value_test_data:
+        tester.assertEqual(
+            best_avg_price(data, test['start_date'], test['end_date']),
+            test['expected_result']
+        )
+
+
+def run_moving_average_test(tester, data):
+    for test in moving_average_test_data:
+        tester.assertEqual(
+            moving_average(data, test['start_date'], test['end_date']),
+            test['expected_result']
+        )
+
+
+def run(data_: tuple[CryptoRecord]) -> None:
+    suite = unittest.TestSuite()
+    suite.addTests((
+        Tester(original_data=data_, test_func=run_highest_price_test),
+        Tester(original_data=data_, test_func=run_lowest_price_test),
+        Tester(original_data=data_, test_func=run_max_volume_test),
+        Tester(original_data=data_, test_func=run_best_avg_value_test),
+        Tester(original_data=data_, test_func=run_moving_average_test),
+    ))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
 
 
 if __name__ == '__main__':
