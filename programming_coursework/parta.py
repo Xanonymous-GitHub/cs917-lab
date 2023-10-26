@@ -1,4 +1,5 @@
 from statistics import mean
+from unittest import TestCase
 
 from model import CryptoRecord
 from testdata.parta import *
@@ -119,7 +120,7 @@ def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
     )
 
 
-def test_highest_price(tester, data):
+def test_highest_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in highest_price_test_data:
         tester.assertEqual(
             highest_price(data, test['start_date'], test['end_date']),
@@ -127,7 +128,7 @@ def test_highest_price(tester, data):
         )
 
 
-def test_lowest_price(tester, data):
+def test_lowest_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in lowest_price_test_data:
         tester.assertEqual(
             lowest_price(data, test['start_date'], test['end_date']),
@@ -135,7 +136,7 @@ def test_lowest_price(tester, data):
         )
 
 
-def test_max_volume(tester, data):
+def test_max_volume(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in max_volume_test_data:
         tester.assertEqual(
             max_volume(data, test['start_date'], test['end_date']),
@@ -143,7 +144,7 @@ def test_max_volume(tester, data):
         )
 
 
-def test_best_avg_value(tester, data):
+def test_best_avg_value(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in best_avg_value_test_data:
         tester.assertEqual(
             best_avg_price(data, test['start_date'], test['end_date']),
@@ -151,7 +152,7 @@ def test_best_avg_value(tester, data):
         )
 
 
-def test_moving_average(tester, data):
+def test_moving_average(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in moving_average_test_data:
         tester.assertEqual(
             moving_average(data, test['start_date'], test['end_date']),
