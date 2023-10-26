@@ -61,9 +61,9 @@ class _UnitTester(unittest.TestCase):
             )
 
 
-def use_validated_date(start_date: str, end_date: str) -> tuple[int, int]:
+def validate_and_convert_dates_to_utc(start_date: str, end_date: str) -> tuple[int, int]:
     """
-    Validate the date and return the UTC number of the date.
+    Validate the dates and convert them to UTC format.
 
     :param start_date: string in "dd/mm/yyyy" format
     :param end_date: string in "dd/mm/yyyy" format
