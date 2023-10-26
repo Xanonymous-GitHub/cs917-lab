@@ -10,9 +10,9 @@ import sys
 from constants import DATA_SOURCE_LOCATION
 from csv_reader import CryptoCompareCsvDto
 from model import CryptoRecord
+from utils.colors import ConsoleColorWrapper, ConsoleColors
 
 PACKAGE_ENTRY_POINT_NAME = 'run'
-EXERCISES_PACKAGE_NAME = ''
 SUBPACKAGE_PREFIX = 'part'
 
 
@@ -49,12 +49,16 @@ class Importer:
                 try:
                     # try to call the sub package entry function.
                     getattr(self.package, PACKAGE_ENTRY_POINT_NAME)(data_)
-                except AttributeError:
-                    # the exercise entry function not found.
-                    print(f'exercise {self.subpackage_serial} entry function can not be found.')
+                except Exception as e:
+                    with ConsoleColorWrapper(ConsoleColors.RED):
+                        print(f'Exceptions found when running exercise {self.subpackage_serial}.')
+                        print(e)
+                finally:
+                    sys.exit(0)
 
         else:
-            print(self.name, 'not found. Only (a, b, c or d)')
+            with ConsoleColorWrapper(ConsoleColors.RED):
+                print(self.name, 'not found. Only (a, b, c or d)')
             sys.exit(1)
 
 
@@ -74,8 +78,9 @@ def main(data_: tuple[CryptoRecord]):
 
         # if user not provide the name of exercise to be run, show error message.
         if len(requested_exercise_name) == 0:
-            print('exercise name not provided, aborted.')
-            return
+            with ConsoleColorWrapper(ConsoleColors.YELLOW):
+                print('exercise name not provided, aborted.')
+            sys.exit(0)
 
         exercise_name = requested_exercise_name[0]
 
@@ -97,5 +102,6 @@ if __name__ == '__main__':
     try:
         main(data)
     except KeyboardInterrupt:
-        print('\nProgram interrupted.')
+        with ConsoleColorWrapper(ConsoleColors.CYAN):
+            print('\nProgram interrupted.')
         sys.exit(0)
