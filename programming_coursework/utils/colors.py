@@ -46,3 +46,14 @@ class ConsoleColorWrapper:
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         print(ConsoleColors.RESET.value, end='')
+
+
+def wrap_with_color(color: ConsoleColors, text: str) -> str:
+    """
+    This function is used to wrap the text with the ANSI escape sequences for the console colors.
+
+    :param color: The color to be used.
+    :param text: The text to be wrapped.
+    :return: The wrapped text.
+    """
+    return f"{color.value}{text}{ConsoleColors.RESET.value}"
