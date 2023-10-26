@@ -2,7 +2,6 @@ import unittest
 from collections.abc import Callable
 from typing import Final
 
-from err import StartDateAfterEndDateError
 from model import CryptoRecord
 from utils.colors import ConsoleColorWrapper, ConsoleColors, wrap_with_color
 from utils.timing import date_str_to_utc_number
