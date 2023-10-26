@@ -2,7 +2,7 @@ from pprint import pprint
 from statistics import mean
 
 from model import CryptoRecord
-from tester import Tester, use_validated_date
+# Removed unused import statement
 from utils import redirect_to_main
 
 
