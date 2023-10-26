@@ -21,7 +21,7 @@ def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str)
     return __moving_avg_with_scope(3, data_, start_date, end_date)
 
 
-def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict:
+def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
     Calculates the long-term moving average of cryptocurrency data.
     
