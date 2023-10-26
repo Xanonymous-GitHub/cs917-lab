@@ -91,13 +91,13 @@ def main(data_: tuple[CryptoRecord]):
         sys.exit(0)
 
 
-def use_crypto_data_set() -> tuple[CryptoRecord]:
-    dto = CryptoCompareCsvDto(f"{DATA_SOURCE_LOCATION}/cryptocompare_btc.csv")
+def use_crypto_data_set(path: str) -> tuple[CryptoRecord]:
+    dto = CryptoCompareCsvDto(path)
     return dto.to_crypto_records()
 
 
 if __name__ == '__main__':
-    data = use_crypto_data_set()
+    data = use_crypto_data_set(f"{DATA_SOURCE_LOCATION}/cryptocompare_btc.csv")
 
     try:
         main(data)
