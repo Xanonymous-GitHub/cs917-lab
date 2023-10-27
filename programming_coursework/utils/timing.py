@@ -16,3 +16,13 @@ def date_str_to_utc_number(date_str: str) -> int:
         raise e
 
     return int(date_obj.replace(tzinfo=timezone.utc).timestamp())
+
+
+def utc_number_to_date_str(utc_number: int) -> str:
+    """
+    Convert a utc number to date string.
+    :param utc_number: utc number
+    :return: string in "dd/mm/yyyy" format
+    """
+
+    return datetime.fromtimestamp(utc_number, tz=timezone.utc).strftime("%d/%m/%Y")
