@@ -4,7 +4,7 @@ from typing import Final
 
 from model import CryptoRecord
 
-CSV = tuple[dict[str, str]]
+CSV = tuple[dict[str, str], ...]
 
 __all__ = ["CryptoCompareCsvDto"]
 
