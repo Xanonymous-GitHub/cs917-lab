@@ -22,6 +22,7 @@ def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str)
     Returns:
         Dictionary mapping dates to their corresponding short-term moving average
     """
+    # The function __moving_avg_with_scope is used to calculate the moving average with a specified scope.
     return __moving_avg_with_scope(3, data_, start_date, end_date)
 
 
@@ -38,6 +39,7 @@ def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) 
     Returns:
         Dictionary mapping dates to their corresponding long-term moving average
     """
+    # The function __moving_avg_with_scope is used to calculate the moving average with a specified scope.
     return __moving_avg_with_scope(10, data_, start_date, end_date)
 
 
@@ -60,6 +62,7 @@ def find_buy_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, flo
     if len(short_avg_dict) == 0 or len(long_avg_dict) == 0:
         return {}
 
+    # The function __find__strategy_decisions is used to apply the decision function to every date in the given dictionaries.
     return __find__strategy_decisions(
         short_avg_dict,
         long_avg_dict,
@@ -87,6 +90,7 @@ def find_sell_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, fl
     if len(short_avg_dict) == 0 or len(long_avg_dict) == 0:
         return {}
 
+    # The function __find__strategy_decisions is used to apply the decision function to every date in the given dictionaries.
     return __find__strategy_decisions(
         short_avg_dict,
         long_avg_dict,
@@ -114,14 +118,11 @@ def crossover_method(
         Tuple containing two lists of dates (in "dd/mm/yyyy" format): the first list contains the dates on which a buy action should be performed, and the second list contains the dates on which a sell action should be performed.
     """
 
+    # The functions moving_avg_short and moving_avg_long are used to calculate the short-term and long-term moving averages respectively.
     short_avg_dict = moving_avg_short(data_, start_date, end_date)
     long_avg_dict = moving_avg_long(data_, start_date, end_date)
 
-    pprint(short_avg_dict)
-    pprint(long_avg_dict)
-
-    # FIXME: replace the redundant way to get the buy_list and sell_list
-
+    # The functions find_buy_list and find_sell_list are used to identify the dates on which a buy action and a sell action should be performed respectively.
     buy_list = [
         utc_number_to_date_str(date) for date, decision, in find_buy_list(short_avg_dict, long_avg_dict).items()
         if decision == 1
