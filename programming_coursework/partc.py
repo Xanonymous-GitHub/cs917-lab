@@ -11,54 +11,49 @@ from utils import redirect_to_main, utc_number_to_date_str
 
 def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
-    Takes the dataset with the start and end dates,
-    and it calculates the moving average with time window 3 for all the dates within the given range.
-    The results are stored in a dictionary with key = date, and value = calculated short average.
+    Calculates the short-term moving average (with a time window of 3) for the given dataset within the specified date range.
+    The results are stored in a dictionary where the key is the date (in UTC format) and the value is the calculated short-term average.
 
     Args:
-        data_: the data from a data_source file
-        start_date: string in "dd/mm/yyyy" format
-        end_date: string in "dd/mm/yyyy" format
+        data_: Tuple of CryptoRecord objects representing the dataset
+        start_date: Start date for the range, in "dd/mm/yyyy" format
+        end_date: End date for the range, in "dd/mm/yyyy" format
 
     Returns:
-        the moving average with time window 3 for all the dates within the given range
+        Dictionary mapping dates to their corresponding short-term moving average
     """
     return __moving_avg_with_scope(3, data_, start_date, end_date)
 
 
 def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
-    Takes the dataset with the start and end dates,
-    and it calculates the moving average with time window 10 for all the dates within the given range.
-    The results are stored in a dictionary with key = date, and value = calculated short average.
+    Calculates the long-term moving average (with a time window of 10) for the given dataset within the specified date range.
+    The results are stored in a dictionary where the key is the date (in UTC format) and the value is the calculated long-term average.
 
     Args:
-        data_: the data from a data_source file
-        start_date: string in "dd/mm/yyyy" format
-        end_date: string in "dd/mm/yyyy" format
+        data_: Tuple of CryptoRecord objects representing the dataset
+        start_date: Start date for the range, in "dd/mm/yyyy" format
+        end_date: End date for the range, in "dd/mm/yyyy" format
 
     Returns:
-        the moving average with time window 10 for all the dates within the given range
+        Dictionary mapping dates to their corresponding long-term moving average
     """
     return __moving_avg_with_scope(10, data_, start_date, end_date)
 
 
 # FIXME: This function named 'find...list' however it returns a dict. This is confusing.
-def find_buy_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, float]) -> dict[int, int]:
+def find_buy_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, float]) -> dict[int, bool]:
     """
-    Finds all the dates that we should buy.
-    For any date t, if the value of `short_avg_dict` at that date (i.e., date t)
-    is “crossing” upward the value of `long_avg_dict`, then we should buy.
-    Here, crossing upward means that for the value of `short_avg_dict` at (t-1)
-    is still smaller or equal to the value of `long_avg_dict` at (t-1), but at date t,
-    the value of `short_avg_dict` already larger than that of `long_avg_dict`.
+    Identifies the dates on which a buy action should be performed based on the short-term and long-term moving averages.
+    A buy action is recommended when the short-term average crosses upward the long-term average. This means that the short-term average
+    at date t-1 is less than or equal to the long-term average at date t-1, but at date t, the short-term average is greater than the long-term average.
+
     Args:
-        short_avg_dict: the moving average with time window 3 for all the dates within the given range
-        long_avg_dict: the moving average with time window 10 for all the dates within the given range
+        short_avg_dict: Dictionary mapping dates to their corresponding short-term moving average
+        long_avg_dict: Dictionary mapping dates to their corresponding long-term moving average
 
     Returns:
-        all the dates. The key is the date, and the value is 1 when we should buy, 0 otherwise.
-        FIXME: The returned type should be `dict[int, bool]` instead of `dict[int, int]`. This is not C.
+        Dictionary mapping dates to a boolean value indicating whether a buy action should be performed (True) or not (False)
     """
 
     # Skip if there's no records
@@ -74,21 +69,18 @@ def find_buy_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, flo
 
 
 # FIXME: This function named 'find...list' however it returns a dict. This is confusing.
-def find_sell_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, float]) -> dict[int, int]:
+def find_sell_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, float]) -> dict[int, bool]:
     """
-    Finds all the dates that we should sell.
-    For any date t, if the value of `short_avg_dict` at that date (i.e., date t)
-    is “crossing” downward the value of `long_avg_dict`, then we should sell.
-    Here, crossing downward means that for the value of `short_avg_dict` at (t-1)
-    is still larger or equal to the value of `long_avg_dict` at (t-1), but at date t,
-    the value of `short_avg_dict` already smaller than that of `long_avg_dict`.
+    Identifies the dates on which a sell action should be performed based on the short-term and long-term moving averages.
+    A sell action is recommended when the short-term average crosses downward the long-term average. This means that the short-term average
+    at date t-1 is greater than or equal to the long-term average at date t-1, but at date t, the short-term average is less than the long-term average.
+
     Args:
-        short_avg_dict: the moving average with time window 3 for all the dates within the given range
-        long_avg_dict: the moving average with time window 10 for all the dates within the given range
+        short_avg_dict: Dictionary mapping dates to their corresponding short-term moving average
+        long_avg_dict: Dictionary mapping dates to their corresponding long-term moving average
 
     Returns:
-        all the dates. The key is the date, and the value is 1 when we should sell, 0 otherwise.
-        FIXME: The returned type should be `dict[int, bool]` instead of `dict[int, int]`. This is not C.
+        Dictionary mapping dates to a boolean value indicating whether a sell action should be performed (True) or not (False)
     """
 
     # Skip if there's no records
@@ -109,18 +101,17 @@ def crossover_method(
         end_date: str
 ) -> tuple[[str, ...], [str, ...]]:
     """
-    Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
-    return two lists of dates, the first list is the dates that we should buy,
-    and the second list is the dates that we should sell.
+    Determines the dates on which buy and sell actions should be performed based on the crossover strategy.
+    The crossover strategy involves comparing the short-term and long-term moving averages of the given dataset within the specified date range.
+    A buy action is recommended when the short-term average crosses upward the long-term average, and a sell action is recommended when the short-term average crosses downward the long-term average.
+
     Args:
-        data_: the data from a data_source file
-        start_date: string in "dd/mm/yyyy" format
-        end_date: string in "dd/mm/yyyy" format
+        data_: Tuple of CryptoRecord objects representing the dataset
+        start_date: Start date for the range, in "dd/mm/yyyy" format
+        end_date: End date for the range, in "dd/mm/yyyy" format
 
     Returns:
-        two lists of dates, the first list is the dates that we should buy,
-        and the second list is the dates that we should sell.
-        Note that the dates format is "dd/mm/yyyy".
+        Tuple containing two lists of dates (in "dd/mm/yyyy" format): the first list contains the dates on which a buy action should be performed, and the second list contains the dates on which a sell action should be performed.
     """
 
     short_avg_dict = moving_avg_short(data_, start_date, end_date)
