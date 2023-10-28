@@ -6,13 +6,13 @@ from unittest import TestCase
 from enums import MarketTrend
 from model import CryptoRecord
 from parta import (
+    best_avg_price,
     highest_price,
     lowest_price,
-    max_volume,
-    best_avg_price
+    max_volume
 )
-from testdata.partd import next_average_test_data, market_trend_test_data
-from tester import use_validated_date, Tester
+from tester import Tester, use_validated_date
+from testdata.partd import market_trend_test_data, next_average_test_data
 from utils import redirect_to_main
 
 
