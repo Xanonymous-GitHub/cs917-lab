@@ -1,14 +1,13 @@
 from collections.abc import Collection
 from statistics import mean
 from typing import Final
-from unittest import TestCase
-
-from enums import MarketTrend
-from model import CryptoRecord
-from parta import (
-    highest_price,
-    lowest_price,
-    max_volume,
+def test_predict_next_day_average_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:
+    for test in next_average_test_data:
+        investment = CryptoInvestmentData(data, test['start_date'], test['end_date'])
+        tester.assertEqual(
+            predict_next_day_average_price(investment),
+            test['next_average']
+        )
     best_avg_price
 )
 from testdata.partd import next_average_test_data, market_trend_test_data
