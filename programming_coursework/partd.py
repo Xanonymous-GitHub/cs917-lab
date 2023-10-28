@@ -55,7 +55,7 @@ def predict_next_day_average_price(investment: CryptoInvestmentData) -> float:
         The predicted average price of the next day.
     """
     data = investment.data
-    return __calculate_regression(
+    return __calculate_linear_regression(
         [record.the_time for record in data],
         [record.volume_to / record.volume_from for record in data]
     )
@@ -84,12 +84,12 @@ def classify_market_trend(investment: CryptoInvestmentData) -> str:
     """
     data = investment.data
 
-    regression_of_high = __calculate_regression(
+    regression_of_high = __calculate_linear_regression(
         [record.the_time for record in data],
         [record.high for record in data]
     )
 
-    regression_of_low = __calculate_regression(
+    regression_of_low = __calculate_linear_regression(
         [record.the_time for record in data],
         [record.low for record in data]
     )
