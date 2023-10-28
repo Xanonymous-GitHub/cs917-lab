@@ -16,7 +16,7 @@ from tester import use_validated_date, Tester
 from utils import redirect_to_main
 
 
-class Investment:
+class CryptoInvestmentData:
     __data: Final[tuple[CryptoRecord]]
     __start_date: Final[str]
     __end_date: Final[str]
@@ -44,7 +44,7 @@ class Investment:
         return best_avg_price(self.__data, self.__start_date, self.__end_date)
 
 
-def predict_next_average(investment: Investment) -> float:
+def predict_next_day_average_price(investment: CryptoInvestmentData) -> float:
     """
     Predict the average price of the next day.
 
@@ -61,7 +61,7 @@ def predict_next_average(investment: Investment) -> float:
     )
 
 
-def classify_trend(investment: Investment) -> str:
+def classify_market_trend(investment: CryptoInvestmentData) -> str:
     """
     Performs a linear regression on the daily high and daily low for a given investment period,
     and determine whether the highs and lows are increasing or decreasing.
@@ -106,7 +106,7 @@ def classify_trend(investment: Investment) -> str:
     return MarketTrend.OTHER.value
 
 
-def __calculate_regression(
+def calculate_linear_regression(
         # FIXME: Use Generic type to specify the type of x_series and y_series.
         x_series: Collection[int | float],
         y_series: Collection[int | float],
@@ -143,32 +143,31 @@ def __calculate_regression(
     return mean_of_y - m * mean_of_x
 
 
-def test_predict_next_average(tester: TestCase, data: tuple[CryptoRecord]) -> None:
+def test_prediction_of_next_day_average_price(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in next_average_test_data:
-        investment = Investment(data, test['start_date'], test['end_date'])
-        tester.assertEqual(
-            predict_next_average(investment),
+    investment = CryptoInvestmentData(data, test['start_date'], test['end_date'])
+    tester.assertEqual(
+        predict_next_day_average_price(investment),
             test['next_average']
         )
 
 
-def test_classify_trend(tester: TestCase, data: tuple[CryptoRecord]) -> None:
+def test_classification_of_market_trend(tester: TestCase, data: tuple[CryptoRecord]) -> None:
     for test in market_trend_test_data:
-        investment = Investment(data, test['start_date'], test['end_date'])
-        tester.assertEqual(
-            classify_trend(investment),
+    investment = CryptoInvestmentData(data, test['start_date'], test['end_date'])
+    tester.assertEqual(
+        classify_market_trend(investment),
             test['classified_trend']
         )
 
 
-def run(data_: tuple[CryptoRecord]) -> None:
+def execute_tests(data_: tuple[CryptoRecord]) -> None:
     Tester(
         'part D',
         data_,
-        test_predict_next_average,
-        test_classify_trend
+        test_prediction_of_next_day_average_price,
+        test_classification_of_market_trend
     ).run()
-
 
 if __name__ == '__main__':
     redirect_to_main('d')
