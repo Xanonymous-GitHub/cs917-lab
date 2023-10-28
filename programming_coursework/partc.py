@@ -1,7 +1,6 @@
 from collections.abc import Callable
 from statistics import mean
 from unittest import TestCase
-from pprint import pprint
 
 from model import CryptoRecord
 from testdata.partc import strategy_test_data
@@ -126,9 +125,6 @@ def crossover_method(
     short_avg_dict = moving_avg_short(data_, start_date, end_date)
     long_avg_dict = moving_avg_long(data_, start_date, end_date)
 
-    pprint(short_avg_dict)
-    pprint(long_avg_dict)
-
     # FIXME: replace the redundant way to get the buy_list and sell_list
 
     buy_list = [
@@ -214,7 +210,9 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
     reversed_scoped_records: list[CryptoRecord | None] = list(scoped_records)[::-1]
 
     # Perform the adding process
-    for _ in range(scope - 1):
+    # We use `scope` instead of `scope - 1` because we need an extra record to
+    # calculate the average of the first record in the strategy list. (will be returned by this function)
+    for _ in range(scope):
         current_index -= 1
         # If we encountered the head of `data_`, use `None` to represents a non-existent record.
         reversed_scoped_records.append(data_[current_index] if current_index >= 0 else None)
@@ -237,7 +235,7 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
 
 
 def test_cross_over(tester: TestCase, data_: tuple[CryptoRecord]) -> None:
-    for strategy in strategy_test_data[1:2]:
+    for strategy in strategy_test_data:
         tester.assertEqual(
             crossover_method(
                 data_,
