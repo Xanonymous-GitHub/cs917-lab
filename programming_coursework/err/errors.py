@@ -15,7 +15,7 @@ class DateOutOfRangeError(__CustomErrorBase):
     def __init__(self, msg: str | None = None):
         super().__init__(
             'Error: date value is out of range'
-            f"{'\n' + msg if msg is not None else ''}"
+            f"{msg if msg is not None else ''}"
         )
 
 
@@ -23,5 +23,5 @@ class StartDateAfterEndDateError(__CustomErrorBase):
     def __init__(self, msg: str | None = None):
         super().__init__(
             'Error: end date must be larger than start date'
-            f"{'\n' + msg if msg is not None else ''}"
+            f"{msg if msg is not None else ''}"
         )
