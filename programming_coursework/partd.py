@@ -55,10 +55,12 @@ def predict_next_average(investment: Investment) -> float:
         The predicted average price of the next day.
     """
     data = investment.data
-    return __calculate_regression(
+    m, b = __calculate_regression_coefficients(
         [record.the_time for record in data],
-        [record.volume_to / record.volume_from for record in data]
+        [record.close_amount for record in data]
     )
+    next_day = data[-1].the_time + 86400
+    return m * next_day + b
 
 
 def classify_trend(investment: Investment) -> str:
@@ -84,33 +86,33 @@ def classify_trend(investment: Investment) -> str:
     """
     data = investment.data
 
-    regression_of_high = __calculate_regression(
+    trend_of_high, _ = __calculate_regression_coefficients(
         [record.the_time for record in data],
         [record.high for record in data]
     )
 
-    regression_of_low = __calculate_regression(
+    trend_of_low, _ = __calculate_regression_coefficients(
         [record.the_time for record in data],
         [record.low for record in data]
     )
 
-    if regression_of_high > 0 > regression_of_low:
+    if trend_of_high > 0 > trend_of_low:
         return MarketTrend.VOLATILE.value
 
-    if regression_of_high > 0 and regression_of_low > 0:
+    if trend_of_high > 0 and trend_of_low > 0:
         return MarketTrend.INCREASING.value
 
-    if regression_of_high < 0 and regression_of_low < 0:
+    if trend_of_high < 0 and trend_of_low < 0:
         return MarketTrend.DECREASING.value
 
     return MarketTrend.OTHER.value
 
 
-def __calculate_regression(
+def __calculate_regression_coefficients(
         # FIXME: Use Generic type to specify the type of x_series and y_series.
         x_series: Collection[int | float],
         y_series: Collection[int | float],
-) -> float:
+) -> tuple[float, float]:
     """
     Calculate the regression of the given series.
     This function has verified by numpy.
@@ -120,7 +122,7 @@ def __calculate_regression(
         y_series: The y series.
 
     Returns:
-        The regression of the given series.
+        two coefficients of the regression, m and b.
     """
 
     if (xy_length := len(x_series)) != len(y_series):
@@ -137,10 +139,10 @@ def __calculate_regression(
 
     m = (
             sum(x * y for x, y in zip(x_minus_mean_of_x, y_minus_mean_of_y)) /
-            sum(x * x for x in x_minus_mean_of_x)
+            sum(x * x for x in x_minus_mean_of_x) ** 2
     )
 
-    return mean_of_y - m * mean_of_x
+    return m, mean_of_y - m * mean_of_x
 
 
 def test_predict_next_average(tester: TestCase, data: tuple[CryptoRecord]) -> None:
