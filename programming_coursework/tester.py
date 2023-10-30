@@ -1,6 +1,6 @@
-import unittest
 from collections.abc import Callable
 from typing import Final
+from unittest import TestCase, TestSuite, TextTestRunner
 
 from err import StartDateAfterEndDateError
 from model import CryptoRecord
@@ -9,7 +9,7 @@ from utils.timing import date_str_to_utc_number
 
 __all__ = ('Tester', None)
 
-_TEST_FUNC_TYPE = Callable[[unittest.TestCase, tuple[CryptoRecord]], None]
+_TEST_FUNC_TYPE = Callable[[TestCase, tuple[CryptoRecord]], None]
 
 
 class Tester:
@@ -23,18 +23,18 @@ class Tester:
         self.__test_funcs = test_funcs
 
     def run(self):
-        suite = unittest.TestSuite()
+        suite = TestSuite()
         suite.addTests(
             _UnitTester(self.__original_data, test_func)
             for test_func in self.__test_funcs
         )
-        runner = unittest.TextTestRunner()
+        runner = TextTestRunner()
 
         print(f'Running {self.__score_name} tests...')
         runner.run(suite)
 
 
-class _UnitTester(unittest.TestCase):
+class _UnitTester(TestCase):
     __original_data: Final[tuple[CryptoRecord]]
     __test_func: Final[_TEST_FUNC_TYPE]
 
