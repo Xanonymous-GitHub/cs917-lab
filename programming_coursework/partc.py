@@ -230,7 +230,7 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
             if (window_item := reversed_scoped_records[i + window_index]) is not None:
                 slide_window_of_record.append(window_item.volume_to / window_item.volume_from)
 
-        result[record.the_time] = round(mean(slide_window_of_record), 2)
+        result[record.the_time] = mean(slide_window_of_record)
 
     return result
 
