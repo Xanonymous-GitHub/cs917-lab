@@ -9,6 +9,7 @@ from parta import (
     highest_price,
     lowest_price,
     max_volume,
+    moving_average,
     best_avg_price
 )
 from testdata.partd import next_average_test_data, market_trend_test_data
@@ -39,6 +40,9 @@ class Investment:
 
     def max_volume(self) -> float:
         return max_volume(self.__data, self.__start_date, self.__end_date)
+
+    def moving_average(self) -> float:
+        return moving_average(self.__data, self.__start_date, self.__end_date)
 
     def best_avg_price(self) -> float:
         return best_avg_price(self.__data, self.__start_date, self.__end_date)
