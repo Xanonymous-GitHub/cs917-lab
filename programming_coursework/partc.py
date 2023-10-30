@@ -212,7 +212,7 @@ def __moving_avg_with_scope(scope: int, data_: tuple[CryptoRecord], start_date: 
     # Perform the adding process
     # We use `scope` instead of `scope - 1` because we need an extra record to
     # calculate the average of the first record in the strategy list. (will be returned by this function)
-    reversed_scoped_records.append(data_[current_index])
+    reversed_scoped_records.append(first_record)  # Add the first record to the end of the list.
     for _ in range(scope):
         current_index -= 1
         # If we encountered the head of `data_`, use `None` to represents a non-existent record.
