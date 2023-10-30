@@ -57,9 +57,11 @@ def predict_next_average(investment: Investment) -> float:
     data = investment.data
     m, b = __calculate_regression_coefficients(
         [record.the_time for record in data],
-        [record.close_amount for record in data]
+        [record.volume_to / record.volume_from for record in data]
     )
+
     next_day = data[-1].the_time + 86400
+
     return m * next_day + b
 
 
@@ -139,7 +141,7 @@ def __calculate_regression_coefficients(
 
     m = (
             sum(x * y for x, y in zip(x_minus_mean_of_x, y_minus_mean_of_y)) /
-            sum(x * x for x in x_minus_mean_of_x) ** 2
+            sum(x * x for x in x_minus_mean_of_x)
     )
 
     return m, mean_of_y - m * mean_of_x
