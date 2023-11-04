@@ -1,6 +1,6 @@
-from collections.abc import Collection
+from collections.abc import Collection, Callable
 from statistics import mean
-from typing import Final
+from typing import Final, TypeVar
 from unittest import TestCase
 
 from enums import MarketTrend
@@ -16,6 +16,9 @@ from testdata.partd import next_average_test_data, market_trend_test_data
 from tester import use_validated_date, Tester
 from utils import redirect_to_main
 
+# TODO remove this when the code can exactly run by python 3.12+.
+_T = TypeVar('_T')
+
 
 class Investment:
     __data: Final[tuple[CryptoRecord]]
@@ -27,25 +30,104 @@ class Investment:
         self.__end_date = end_date
         self.__data = data
 
-    @property
-    def data(self) -> tuple[CryptoRecord]:
-        start_date_utc, end_date_utc = use_validated_date(self.__start_date, self.__end_date)
+    def __cut_data_slice_between(self, start_date: str, end_date: str) -> tuple[CryptoRecord]:
+        start_date_utc, end_date_utc = use_validated_date(start_date, end_date)
         return tuple(record for record in self.__data if start_date_utc <= record.the_time <= end_date_utc)
 
-    def highest_price(self) -> float:
-        return highest_price(self.__data, self.__start_date, self.__end_date)
+    # TODO: migrate this utility function to utils.py, and use python 3.12+ generic feature.
+    @staticmethod
+    def __either_or(value: _T | None, default: _T) -> _T:
+        return value if value is not None else default
 
-    def lowest_price(self) -> float:
-        return lowest_price(self.__data, self.__start_date, self.__end_date)
+    def __calculate_data_in_period_by(
+            self,
+            operation: Callable[[tuple[CryptoRecord], str, str], float],
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None
+    ) -> float:
+        # This is for the case that data is missed and the rest of the arguments may be not,
+        # Plus all given arguments are provided by positional arguments, not keyword arguments.
+        if isinstance(data, str):
+            # FIXME: Do not modify function arguments. This only for Coursework requirements.
+            end_date = start_date
+            start_date = data
+            data = None
 
-    def max_volume(self) -> float:
-        return max_volume(self.__data, self.__start_date, self.__end_date)
+        return operation(
+            self.__either_or(data, self.__data),
+            self.__either_or(start_date, self.__start_date),
+            self.__either_or(end_date, self.__end_date)
+        )
 
-    def moving_average(self) -> float:
-        return moving_average(self.__data, self.__start_date, self.__end_date)
+    @property
+    def data(self) -> tuple[CryptoRecord]:
+        return self.__cut_data_slice_between(self.__start_date, self.__end_date)
 
-    def best_avg_price(self) -> float:
-        return best_avg_price(self.__data, self.__start_date, self.__end_date)
+    def highest_price(
+            self,
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> float:
+        return self.__calculate_data_in_period_by(
+            operation=highest_price,
+            data=data,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+    def lowest_price(
+            self,
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> float:
+        return self.__calculate_data_in_period_by(
+            operation=lowest_price,
+            data=data,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+    def max_volume(
+            self,
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> float:
+        return self.__calculate_data_in_period_by(
+            operation=max_volume,
+            data=data,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+    def moving_average(
+            self,
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> float:
+        return self.__calculate_data_in_period_by(
+            operation=moving_average,
+            data=data,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+    def best_avg_price(
+            self,
+            data: tuple[CryptoRecord] | None = None,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> float:
+        return self.__calculate_data_in_period_by(
+            operation=best_avg_price,
+            data=data,
+            start_date=start_date,
+            end_date=end_date
+        )
 
 
 def predict_next_average(investment: Investment) -> float:
