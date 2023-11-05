@@ -1,12 +1,14 @@
 from statistics import mean
 from unittest import TestCase
 
-from model import CryptoRecord
+from context import expect_illegal_data_type
+from model import CryptoRecord, empty_record
 from testdata.parta import *
 from tester import Tester, use_validated_date
 from utils import redirect_to_main
 
 
+@expect_illegal_data_type
 def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
@@ -26,10 +28,12 @@ def highest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) ->
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
-        key=lambda x: x.high
+        key=lambda x: x.high,
+        default=empty_record
     ).high
 
 
+@expect_illegal_data_type
 def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
@@ -51,11 +55,13 @@ def lowest_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> 
     return round(
         min(
             (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
-            key=lambda x: x.low
+            key=lambda x: x.low,
+            default=empty_record
         ).low, 2
     )
 
 
+@expect_illegal_data_type
 def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
@@ -75,10 +81,12 @@ def max_volume(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> fl
 
     return max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
-        key=lambda x: x.volume_from
+        key=lambda x: x.volume_from,
+        default=empty_record
     ).volume_from
 
 
+@expect_illegal_data_type
 def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Given the data, a start date, and an end date (both are string with “dd/mm/yyyy” format),
@@ -99,12 +107,17 @@ def best_avg_price(data_: tuple[CryptoRecord], start_date: str, end_date: str) -
 
     highest_price_record = max(
         (record for record in data_ if start_date_utc <= record.the_time <= end_date_utc),
-        key=lambda x: x.volume_to / x.volume_from
+        key=lambda x: x.volume_to / x.volume_from,
+        default=empty_record
     )
+
+    if highest_price_record.volume_from == 0:
+        return 0
 
     return highest_price_record.volume_to / highest_price_record.volume_from
 
 
+@expect_illegal_data_type
 def moving_average(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> float:
     """
     Should return the average BTC currency price over the given period of time (accurate to 2 decimal places).

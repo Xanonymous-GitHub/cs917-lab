@@ -33,8 +33,10 @@ class CryptoCompareCsvDto:
                     reader = DictReader(file)
                 return tuple([r for r in reader])
         except FileNotFoundError as e:
-            print('Error: dataset not found')
-            raise e
+            raise FileNotFoundError(
+                f'Error: the dataset is not found.'
+                f'Please check if the dataset is in the correct location.'
+            ) from e
 
     def __from_row_to_crypto_compare_record(self, row: dict[str, ...]) -> CryptoRecord:
         try:
@@ -48,15 +50,17 @@ class CryptoCompareCsvDto:
                 volume_to=float(row[self.VOLUME_TO_COL_NAME]),
             )
         except KeyError as e:
-            print('Error: requested column is missing from dataset')
-            raise e
+            raise KeyError(
+                f'Error: missing column in the dataset.'
+                f'Please check if the dataset is valid.'
+            ) from e
 
-    def to_crypto_records(self) -> tuple[CryptoRecord]:
-        raw_csv: Final[CSV] = self.__read_csv_rows()
+    def to_crypto_records(self, raw_csv: CSV | None = None) -> tuple[CryptoRecord]:
+        _raw_csv: Final[CSV] = raw_csv if raw_csv is not None else self.__read_csv_rows()
 
         records: Final[list[CryptoRecord]] = []
 
-        for row in raw_csv:
+        for row in _raw_csv:
             records.append(self.__from_row_to_crypto_compare_record(row))
 
         # Sort the records by the time to enhance the performance of the binary search.

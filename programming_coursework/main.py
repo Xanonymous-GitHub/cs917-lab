@@ -7,8 +7,7 @@ https://github.com/Xanonymous-GitHub/MultimediaX/blob/main/main.py
 import importlib
 import sys
 
-from constants import DATA_SOURCE_LOCATION
-from csv_reader import CryptoCompareCsvDto
+from context import use_default_crypto_data_set
 from model import CryptoRecord
 from utils.colors import ConsoleColorWrapper, ConsoleColors
 
@@ -91,13 +90,8 @@ def main(data_: tuple[CryptoRecord]):
         sys.exit(0)
 
 
-def use_crypto_data_set(path: str) -> tuple[CryptoRecord]:
-    dto = CryptoCompareCsvDto(path)
-    return dto.to_crypto_records()
-
-
 if __name__ == '__main__':
-    data = use_crypto_data_set(f"{DATA_SOURCE_LOCATION}/cryptocompare_btc.csv")
+    data = use_default_crypto_data_set()
 
     try:
         main(data)

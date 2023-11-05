@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from utils import ValidatableDataClass, JsonSerializable
 
-__all__ = ["CryptoRecord"]
+__all__ = ["CryptoRecord", "empty_record"]
 
 
 @dataclass(frozen=True)
@@ -27,3 +27,6 @@ class CryptoRecord(ValidatableDataClass, JsonSerializable):
     close_amount: float
     volume_from: float
     volume_to: float
+
+
+empty_record = CryptoRecord(0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)

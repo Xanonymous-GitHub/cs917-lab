@@ -1,6 +1,6 @@
 from collections.abc import Collection, Callable
 from statistics import mean
-from typing import Final, TypeVar
+from typing import Final, TypeVar, final
 from unittest import TestCase
 
 from enums import MarketTrend
@@ -64,6 +64,7 @@ class Investment:
     def data(self) -> tuple[CryptoRecord]:
         return self.__cut_data_slice_between(self.__start_date, self.__end_date)
 
+    @final
     def highest_price(
             self,
             data: tuple[CryptoRecord] | None = None,
@@ -77,6 +78,7 @@ class Investment:
             end_date=end_date
         )
 
+    @final
     def lowest_price(
             self,
             data: tuple[CryptoRecord] | None = None,
@@ -90,6 +92,7 @@ class Investment:
             end_date=end_date
         )
 
+    @final
     def max_volume(
             self,
             data: tuple[CryptoRecord] | None = None,
@@ -103,6 +106,7 @@ class Investment:
             end_date=end_date
         )
 
+    @final
     def moving_average(
             self,
             data: tuple[CryptoRecord] | None = None,
@@ -116,6 +120,7 @@ class Investment:
             end_date=end_date
         )
 
+    @final
     def best_avg_price(
             self,
             data: tuple[CryptoRecord] | None = None,
@@ -258,6 +263,9 @@ def run(data_: tuple[CryptoRecord]) -> None:
         test_predict_next_average,
         test_classify_trend
     ).run()
+
+    test_investment = Investment(data_, '01/01/2016', '31/01/2016')
+    print(test_investment.best_avg_price('01/01/2016', '31/01/2016'))
 
 
 if __name__ == '__main__':

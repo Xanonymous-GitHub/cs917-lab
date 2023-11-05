@@ -2,12 +2,14 @@ from collections.abc import Callable
 from statistics import mean
 from unittest import TestCase
 
+from context import expect_illegal_data_type
 from model import CryptoRecord
 from testdata.partc import strategy_test_data
 from tester import Tester, use_validated_date
 from utils import redirect_to_main, utc_number_to_date_str
 
 
+@expect_illegal_data_type
 def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
     Takes the dataset with the start and end dates,
@@ -25,6 +27,7 @@ def moving_avg_short(data_: tuple[CryptoRecord], start_date: str, end_date: str)
     return __moving_avg_with_scope(3, data_, start_date, end_date)
 
 
+@expect_illegal_data_type
 def moving_avg_long(data_: tuple[CryptoRecord], start_date: str, end_date: str) -> dict[int, float]:
     """
     Takes the dataset with the start and end dates,
@@ -102,6 +105,7 @@ def find_sell_list(short_avg_dict: dict[int, float], long_avg_dict: dict[int, fl
     )
 
 
+@expect_illegal_data_type
 def crossover_method(
         data_: tuple[CryptoRecord],
         start_date: str,

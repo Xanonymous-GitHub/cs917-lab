@@ -74,8 +74,6 @@ def use_validated_date(start_date: str, end_date: str) -> tuple[int, int]:
     end_date_utc = date_str_to_utc_number(end_date)
 
     if start_date_utc > end_date_utc:
-        exception = StartDateAfterEndDateError()
-        print(exception)
-        raise exception
+        raise StartDateAfterEndDateError()
 
     return start_date_utc, end_date_utc
