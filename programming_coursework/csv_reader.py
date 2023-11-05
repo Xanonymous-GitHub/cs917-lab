@@ -34,8 +34,8 @@ class CryptoCompareCsvDto:
                 return tuple([r for r in reader])
         except FileNotFoundError as e:
             raise FileNotFoundError(
-                f'Error: the dataset is not found.'
-                f'Please check if the dataset is in the correct location.'
+                'Error: the dataset is not found.'
+                'Please check if the dataset is in the correct location.'
             ) from e
 
     def __from_row_to_crypto_compare_record(self, row: dict[str, ...]) -> CryptoRecord:
@@ -51,8 +51,8 @@ class CryptoCompareCsvDto:
             )
         except KeyError as e:
             raise KeyError(
-                f'Error: missing column in the dataset.'
-                f'Please check if the dataset is valid.'
+                'Error: missing column in the dataset.'
+                'Please check if the dataset is valid.'
             ) from e
 
     def to_crypto_records(self, raw_csv: CSV | None = None) -> tuple[CryptoRecord]:
