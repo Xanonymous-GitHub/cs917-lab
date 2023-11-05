@@ -51,7 +51,7 @@ def data_validatable(func: Callable[[Sequence, str, str], float]) -> Callable[[S
 
         __validate_dates_range(cleaned_data, start_date, end_date)
 
-        return func(data_, start_date, end_date)
+        return func(cleaned_data, start_date, end_date)
 
     return __with_validated_data
 
