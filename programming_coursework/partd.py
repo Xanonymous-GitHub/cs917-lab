@@ -264,9 +264,6 @@ def run(data_: tuple[CryptoRecord]) -> None:
         test_classify_trend
     ).run()
 
-    test_investment = Investment(data_, '01/01/2016', '31/01/2016')
-    print(test_investment.best_avg_price('01/01/2016', '31/01/2016'))
-
 
 if __name__ == '__main__':
     redirect_to_main('d')
