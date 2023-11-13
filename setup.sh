@@ -23,7 +23,7 @@ function setup() {
   poetry env use "$PYTHON_VERSION"
 
   # Install dependencies.
-  poetry install
+  poetry install --no-root
 }
 
 setup && echo "Setup complete. Now run 'poetry shell' to activate the virtualenv."
