@@ -4,7 +4,7 @@ from threading import Thread, Lock
 from typing import Optional
 
 from morse_code import mose_code_to_words, mose_code_tree
-from utils.file import read_file_from
+from utils.file import injected_cached_file_unique_lines_from
 
 
 # FIXME: follow PEP8 naming conventions, this function should be called `morse_decode`.
@@ -49,7 +49,7 @@ def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
     def read_word_dictionary():
         nonlocal word_dictionary
         with Lock():
-            word_dictionary = frozenset(read_file_from('dictionary.txt'))
+            word_dictionary = injected_cached_file_unique_lines_from('dictionary.txt')
 
     read_file_task = Thread(target=read_word_dictionary)
     read_file_task.start()
