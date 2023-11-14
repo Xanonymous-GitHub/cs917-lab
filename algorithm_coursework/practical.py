@@ -95,7 +95,7 @@ class Maze:
     __known_max_x: int = 0
     __known_max_y: int = 0
 
-    __wall_char: Final[str] = '* '
+    __wall_char: Final[str] = '*'
     __empty_char: Final[str] = '  '
 
     # The map of the maze, the key is the x coordinate, points to the y coordinate, then points to a MazeBlock.
@@ -190,24 +190,35 @@ class Maze:
         # A queue-like structure that stores the coordinates to be visited.
         to_be_visited: deque[MazeBlock] = deque((self.__maze[x1][y1],))
 
+        # Implement the BFS algorithm to find the shortest path.
         while len(to_be_visited) > 0:
+            # Obtain the next block to be visited.
             current_block = to_be_visited.popleft()
 
+            # Check if the current block is the end block.
             if current_block == self.__maze[x2][y2]:
                 return self.__describe_visited_path(end_block=current_block)
 
+            # Try to visit the neighbours of the current block.
             for move_y, move_x in EXPECTED_MAZE_NEIGHBOUR_DIRECTIONS:
                 next_x = current_block.x + move_x
                 next_y = current_block.y + move_y
 
+                # Check if the next coordinate is inside the maze.
+                # If not, skip the current iteration.
                 if not self.__is_valid_coordinate(x=next_x, y=next_y):
                     continue
 
+                # Check if the next block is configured.
+                # Since we expect all un-configured blocks are walls,
+                # we can skip the configuration process.
                 if self.__is_block_configured(x=next_x, y=next_y):
                     next_block = self.__maze[next_x][next_y]
                     if next_block.category == MazeBlockType.WALL:
                         continue
 
+                    # Check if the next block is visited.
+                    # We expect not to visit the same block twice.
                     if visited[next_x][next_y]:
                         continue
                 else:
@@ -215,9 +226,18 @@ class Maze:
                     # we can skip the configuration process.
                     continue
 
+                # Mark the next block as visited.
+                # The distance of the next block is the distance of the current block plus one.
                 next_block.distance = current_block.distance + 1
+
+                # Record the last visited block of the next block.
+                # This is used to describe the visited path.
                 next_block.last_visited_block = current_block
+
+                # Mark the next block as visited.
                 visited[next_x][next_y] = True
+
+                # Add the next block to the queue, for the next iteration.
                 to_be_visited.append(next_block)
         else:
             return ()
