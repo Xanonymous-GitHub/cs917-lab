@@ -1,8 +1,11 @@
+from collections import OrderedDict, defaultdict, deque
 from collections.abc import Sequence
 from itertools import product
+from pprint import pprint
 from threading import Thread, Lock
-from typing import Optional
+from typing import Optional, Final
 
+from maze_block import MazeBlock, MazeBlockType, EXPECTED_MAZE_NEIGHBOUR_DIRECTIONS
 from morse_code import mose_code_to_words, mose_code_tree
 from utils.file import injected_cached_file_unique_lines_from
 
@@ -89,47 +92,135 @@ def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
 
 
 class Maze:
-    def __init__(self):
-        """
-        Constructor - You may modify this, but please do not add any extra parameters
-        """
+    __known_max_x: int = 0
+    __known_max_y: int = 0
 
-        pass
+    __wall_char: Final[str] = '* '
+    __empty_char: Final[str] = '  '
+
+    # The map of the maze, the key is the x coordinate, points to the y coordinate, then points to a MazeBlock.
+    # For example, when we want to get the MazeBlock at (x=1, y=2), we can do:
+    # maze[1][2]
+    __maze: Final[OrderedDict[int, OrderedDict[int, MazeBlock]]]
+
+    def __init__(self):
+        self.__maze = OrderedDict()
+
+    def __update_known_edge(self, /, *, new_x: int, new_y: int) -> None:
+        self.__known_max_x = max(self.__known_max_x, new_x)
+        self.__known_max_y = max(self.__known_max_y, new_y)
+
+    def __is_valid_coordinate(self, /, *, x: int, y: int) -> bool:
+        return 0 <= x <= self.__known_max_x and 0 <= y <= self.__known_max_y
+
+    def __is_block_configured(self, /, *, x: int, y: int) -> bool:
+        return x in self.__maze and y in self.__maze[x]
+
+    @staticmethod
+    def __describe_visited_path(*, end_block: MazeBlock) -> tuple[tuple[int, int], ...]:
+        path: list[tuple[int, int]] = []
+        current_block = end_block
+        while current_block is not None:
+            path.append((current_block.x, current_block.y))
+            current_block = current_block.last_visited_block
+        return tuple(path[::-1])
+
+    @staticmethod
+    def __new_wall_block_at(*, x: int, y: int) -> MazeBlock:
+        new_wall_block = MazeBlock(
+            x=x,
+            y=y,
+            category=MazeBlockType.WALL
+        )
+        return new_wall_block
 
     # FIXME: follow PEP8 naming conventions, this function should be called `add_coordinate`.
     # noinspection PyPep8Naming
-    def addCoordinate(self, x, y, blockType):
+    def addCoordinate(self, x, y, is_wall: bool, /) -> None:
         """
         Add information about a coordinate on the maze grid
         x is the x coordinate
         y is the y coordinate
         blockType should be 0 (for an open space) of 1 (for a wall)
         """
-
-        # Please complete this method to perform the above described function
-        pass
+        self.__update_known_edge(new_x=x, new_y=y)
+        new_maze_block = MazeBlock(
+            x=x,
+            y=y,
+            category=MazeBlockType.WALL if bool(is_wall) else MazeBlockType.EMPTY
+        )
+        self.__maze.setdefault(x, OrderedDict())[y] = new_maze_block
 
     # FIXME: follow PEP8 naming conventions, this function should be called `print_maze`.
     # noinspection PyPep8Naming
-    def printMaze(self):
+    def printMaze(self) -> None:
         """
         Print out an ascii representation of the maze.
-        A * indicates a wall and a empty space indicates an open space in the maze
+        A * indicates a wall and an empty space indicates an open space in the maze
         """
-
-        # Please complete this method to perform the above described function
-        pass
+        buffer: list[str] = []
+        for y in range(self.__known_max_y + 1):
+            for x in range(self.__known_max_x + 1):
+                if x in self.__maze and y in self.__maze[x]:
+                    buffer.append(
+                        self.__wall_char if self.__maze[x][y].category == MazeBlockType.WALL
+                        else self.__empty_char
+                    )
+                else:
+                    buffer.append(self.__wall_char)
+            buffer.append('\n')
+        buffer.pop()
+        print(''.join(buffer))
 
     # FIXME: follow PEP8 naming conventions, this function should be called `find_route`.
     # noinspection PyPep8Naming
-    def findRoute(self, x1, y1, x2, y2):
+    def findRoute(self, x1: int, y1: int, x2: int, y2: int) -> tuple[tuple[int, int], ...]:
         """
         This method should find a route, traversing open spaces, from the coordinates (x1,y1) to (x2,y2)
         It should return the list of traversed coordinates followed along this route as a list of tuples (x,y),
         in the order in which the coordinates must be followed
         If no route is found, return an empty list
         """
-        pass
+        # A map-like structure that stores the visited coordinates.
+        visited: dict[int, dict[int, bool]] = defaultdict(lambda: defaultdict(lambda: False))
+
+        # Mark the start coordinate as visited.
+        visited[x1][y1] = True
+
+        # A queue-like structure that stores the coordinates to be visited.
+        to_be_visited: deque[MazeBlock] = deque((self.__maze[x1][y1],))
+
+        while len(to_be_visited) > 0:
+            current_block = to_be_visited.popleft()
+
+            if current_block == self.__maze[x2][y2]:
+                return self.__describe_visited_path(end_block=current_block)
+
+            for move_y, move_x in EXPECTED_MAZE_NEIGHBOUR_DIRECTIONS:
+                next_x = current_block.x + move_x
+                next_y = current_block.y + move_y
+
+                if not self.__is_valid_coordinate(x=next_x, y=next_y):
+                    continue
+
+                if self.__is_block_configured(x=next_x, y=next_y):
+                    next_block = self.__maze[next_x][next_y]
+                    if next_block.category == MazeBlockType.WALL:
+                        continue
+
+                    if visited[next_x][next_y]:
+                        continue
+                else:
+                    # Since we expect all un-configured blocks are walls,
+                    # we can skip the configuration process.
+                    continue
+
+                next_block.distance = current_block.distance + 1
+                next_block.last_visited_block = current_block
+                visited[next_x][next_y] = True
+                to_be_visited.append(next_block)
+        else:
+            return ()
 
 
 # FIXME: follow PEP8 naming conventions, this function should be called `morse_code_test`.
@@ -173,54 +264,74 @@ def mazeTest():
     The remainder of coordinates within the max bounds of these specified coordinates
     are assumed to be walls
     """
-    myMaze = Maze()
-    myMaze.addCoordinate(1, 0, 0)  # Start index
-    myMaze.addCoordinate(1, 1, 0)
-    myMaze.addCoordinate(1, 3, 0)
-    myMaze.addCoordinate(1, 4, 0)
-    myMaze.addCoordinate(1, 5, 0)
-    myMaze.addCoordinate(1, 6, 0)
-    myMaze.addCoordinate(1, 7, 0)
+    my_maze = Maze()
+    my_maze.addCoordinate(1, 0, False)  # Start index
+    my_maze.addCoordinate(1, 1, False)
+    my_maze.addCoordinate(1, 3, False)
+    my_maze.addCoordinate(1, 4, False)
+    my_maze.addCoordinate(1, 5, False)
+    my_maze.addCoordinate(1, 6, False)
+    my_maze.addCoordinate(1, 7, False)
 
-    myMaze.addCoordinate(2, 1, 0)
-    myMaze.addCoordinate(2, 2, 0)
-    myMaze.addCoordinate(2, 3, 0)
-    myMaze.addCoordinate(2, 6, 0)
+    my_maze.addCoordinate(2, 1, False)
+    my_maze.addCoordinate(2, 2, False)
+    my_maze.addCoordinate(2, 3, False)
+    my_maze.addCoordinate(2, 6, False)
 
-    myMaze.addCoordinate(3, 1, 0)
-    myMaze.addCoordinate(3, 3, 0)
-    myMaze.addCoordinate(3, 4, 0)
-    myMaze.addCoordinate(3, 5, 0)
-    myMaze.addCoordinate(3, 7, 0)
-    myMaze.addCoordinate(3, 8, 0)  # End index
+    my_maze.addCoordinate(3, 1, False)
+    my_maze.addCoordinate(3, 3, False)
+    my_maze.addCoordinate(3, 4, False)
+    my_maze.addCoordinate(3, 5, False)
+    my_maze.addCoordinate(3, 7, False)
+    my_maze.addCoordinate(3, 8, False)  # End index
 
-    myMaze.addCoordinate(4, 1, 0)
-    myMaze.addCoordinate(4, 5, 0)
-    myMaze.addCoordinate(4, 7, 0)
+    my_maze.addCoordinate(4, 1, False)
+    my_maze.addCoordinate(4, 5, False)
+    my_maze.addCoordinate(4, 7, False)
 
-    myMaze.addCoordinate(5, 1, 0)
-    myMaze.addCoordinate(5, 2, 0)
-    myMaze.addCoordinate(5, 3, 0)
-    myMaze.addCoordinate(5, 5, 0)
-    myMaze.addCoordinate(5, 6, 0)
-    myMaze.addCoordinate(5, 7, 0)
+    my_maze.addCoordinate(5, 1, False)
+    my_maze.addCoordinate(5, 2, False)
+    my_maze.addCoordinate(5, 3, False)
+    my_maze.addCoordinate(5, 5, False)
+    my_maze.addCoordinate(5, 6, False)
+    my_maze.addCoordinate(5, 7, False)
 
-    myMaze.addCoordinate(6, 3, 0)
-    myMaze.addCoordinate(6, 5, 0)
-    myMaze.addCoordinate(6, 7, 0)
+    my_maze.addCoordinate(6, 3, False)
+    my_maze.addCoordinate(6, 5, False)
+    my_maze.addCoordinate(6, 7, False)
 
-    myMaze.addCoordinate(7, 1, 0)
-    myMaze.addCoordinate(7, 2, 0)
-    myMaze.addCoordinate(7, 3, 0)
-    myMaze.addCoordinate(7, 5, 0)
-    myMaze.addCoordinate(7, 7, 0)
+    my_maze.addCoordinate(7, 1, False)
+    my_maze.addCoordinate(7, 2, False)
+    my_maze.addCoordinate(7, 3, False)
+    my_maze.addCoordinate(7, 5, False)
+    my_maze.addCoordinate(7, 7, False)
+
+    my_maze.printMaze()
+
+    def maze_find_route_test() -> None:
+        print(f'Find route from (1, 0) to (1, 7):')
+        route = my_maze.findRoute(1, 0, 1, 7)
+        pprint(route)
+
+        print(f'Find route from (1, 0) to (3, 8):')
+        route = my_maze.findRoute(1, 0, 3, 8)
+        pprint(route)
+
+        print(f'Find route from (1, 0) to (7, 7):')
+        route = my_maze.findRoute(1, 0, 7, 7)
+        pprint(route)
+
+        print(f'Find route from (1, 0) to (1, 0):')
+        route = my_maze.findRoute(1, 0, 1, 0)
+        pprint(route)
+
+    maze_find_route_test()
 
 
 def main():
-    # morseCodeTest()
+    morseCodeTest()
     partialMorseCodeTest()
-    # mazeTest()
-    # TODO: Test your findRoute method
+    mazeTest()
 
 
 if __name__ == "__main__":
