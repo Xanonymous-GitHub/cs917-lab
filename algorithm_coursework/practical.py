@@ -1,20 +1,31 @@
+from collections.abc import Sequence
+from itertools import product
+from threading import Thread, Lock
+from typing import Optional
+
+from morse_code import mose_code_to_words, mose_code_tree
+from utils.file import read_file_from
+
+
 # FIXME: follow PEP8 naming conventions, this function should be called `morse_decode`.
 # noinspection PyPep8Naming
-def morseDecode(inputStringList):
+def morseDecode(raw_morse_codes: Sequence[str], /) -> str:
     """
     This method should take a list of strings as input. Each string is equivalent to one letter
     (i.e. one morse code string). The entire list of strings represents a word.
 
     This method should convert the strings from morse code into english, and return the word as a string.
-
     """
-    # Please complete this method to perform the above described function
-    pass
+
+    return ''.join(
+        mose_code_to_words[raw_morse_code]
+        for raw_morse_code in raw_morse_codes
+    )
 
 
 # FIXME: follow PEP8 naming conventions, this function should be called `morse_partial_decode`.
 # noinspection PyPep8Naming
-def morsePartialDecode(inputStringList):
+def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
     """
     This method should take a list of strings as input. Each string is equivalent to one letter
     (i.e. one morse code string). The entire list of strings represents a word.
@@ -26,18 +37,55 @@ def morsePartialDecode(inputStringList):
     However, with the first characters missing, I would receive:
     ['x','x','x..','x']
 
-    With the x unknown, this word could be TEST, but it could also be EESE or ETSE or ETST or EEDT or other permutations.
+    With the x unknown, this word could be tested,
+    but it could also be EESE or ETSE or ETST or EEDT or other permutations.
 
-    We define a valid words as one that exists within the dictionary file provided on the website, dictionary.txt
-    When using this file, please always use the location './dictionary.txt' and place it in the same directory as
-    the python script.
+    We define a valid words as one that exists within the dictionary file provided on the dictionary.txt
 
     This function should find and return a list of strings of all possible VALID words.
     """
+    word_dictionary: Optional[frozenset[str]] = None
 
-    dictionaryFileLoc = './dictionary.txt'
-    # Please complete this method to perform the above described function
-    pass
+    def read_word_dictionary():
+        nonlocal word_dictionary
+        with Lock():
+            word_dictionary = frozenset(read_file_from('dictionary.txt'))
+
+    read_file_task = Thread(target=read_word_dictionary)
+    read_file_task.start()
+
+    letter_assumptions: [tuple[str]] = []
+
+    root = mose_code_tree.root
+    possible_ans_of_only_x = tuple([
+        root.left.answer,
+        root.right.answer,
+    ])
+
+    for raw_morse_code in raw_morse_codes:
+        inverse_raw_morse_code_without_x = raw_morse_code[:0:-1]
+        if inverse_raw_morse_code_without_x == '':
+            letter_assumptions.append(possible_ans_of_only_x)
+            continue
+
+        nearest_node = mose_code_tree.find_nearest_node(morse_signs=inverse_raw_morse_code_without_x)
+
+        left_node = nearest_node.left
+        right_node = nearest_node.right
+
+        current_assumptions = []
+        if left_node is not None:
+            current_assumptions.append(left_node.answer)
+        if right_node is not None:
+            current_assumptions.append(right_node.answer)
+
+        letter_assumptions.append(tuple(current_assumptions))
+
+    all_possible_words: frozenset[str] = frozenset([''.join(word) for word in product(*letter_assumptions)])
+
+    read_file_task.join()
+
+    return tuple(all_possible_words & word_dictionary)
 
 
 class Maze:
@@ -169,9 +217,9 @@ def mazeTest():
 
 
 def main():
-    morseCodeTest()
+    # morseCodeTest()
     partialMorseCodeTest()
-    mazeTest()
+    # mazeTest()
     # TODO: Test your findRoute method
 
 
