@@ -49,16 +49,27 @@ def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
     """
     word_dictionary: Optional[frozenset[str]] = None
 
+    # Define the file reading task.
+    # Since the file reading task is IO-bound, we can use multi-threading to improve the performance.
     def read_word_dictionary():
         nonlocal word_dictionary
         with Lock():
+            # Here we use the cached file data to ensure the file is only read once.
             word_dictionary = injected_cached_file_unique_lines_from('dictionary.txt')
 
+    # Start asynchronous file reading task.
     read_file_task = Thread(target=read_word_dictionary)
     read_file_task.start()
 
+    # A space to store the assumptions of each letter.
+    # For example, like the doc mentioned, the first letter can be 'e' or 't',
+    # so the first element of this list is ("e', "t").
     letter_assumptions: [tuple[str]] = []
 
+    # When the raw morse code is empty, we assume the letter is 'x'.
+    # So the possible answer of the letter is "e" or "t".
+    # However, we can not directly use the answer to be our assumption,
+    # So we use the theoretical assumption of the letter from the decision tree.
     root = mose_code_tree.root
     possible_ans_of_only_x = tuple([
         root.left.answer,
@@ -66,13 +77,23 @@ def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
     ])
 
     for raw_morse_code in raw_morse_codes:
+        # Since the first character of every morse code string is unknown (represented by an 'x' (lowercase)),
+        # we can ignore the first character.
+        # And it is also known that using the inverse version of the raw morse code can get the nearest node,
+        # which only contains two possible answers.
         inverse_raw_morse_code_without_x = raw_morse_code[:0:-1]
+
+        # If the raw morse code is empty, we assume the letter is 'x'.
+        # So we just apply the existing assumption.
         if inverse_raw_morse_code_without_x == '':
             letter_assumptions.append(possible_ans_of_only_x)
             continue
 
+        # Find the nearest node of the inverse raw morse code.
+        # This step expects to get the nearest node, which only contains maximum two possible answers.
         nearest_node = mose_code_tree.find_nearest_node(morse_signs=inverse_raw_morse_code_without_x)
 
+        # Append our assumption of the letter into the list (`letter_assumptions`).
         left_node = nearest_node.left
         right_node = nearest_node.right
 
@@ -84,10 +105,14 @@ def morsePartialDecode(raw_morse_codes: Sequence[str], /) -> tuple[str]:
 
         letter_assumptions.append(tuple(current_assumptions))
 
+    # Create all possible words from the assumptions of each letter.
+    # The size of all_possible_words would be at most 2^len(raw_morse_codes).
     all_possible_words: frozenset[str] = frozenset([''.join(word) for word in product(*letter_assumptions)])
 
+    # Wait for the file reading task to finish.
     read_file_task.join()
 
+    # Filter the possible words by the word dictionary.
     return tuple(all_possible_words & word_dictionary)
 
 
