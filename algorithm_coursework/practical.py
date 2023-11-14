@@ -121,7 +121,7 @@ class Maze:
     __known_max_y: int = 0
 
     __wall_char: Final[str] = '*'
-    __empty_char: Final[str] = '  '
+    __empty_char: Final[str] = ' '
 
     # The map of the maze, the key is the x coordinate, points to the y coordinate, then points to a MazeBlock.
     # For example, when we want to get the MazeBlock at (x=1, y=2), we can do:
