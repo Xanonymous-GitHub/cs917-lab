@@ -354,19 +354,19 @@ def mazeTest():
     my_maze.printMaze()
 
     def maze_find_route_test() -> None:
-        print(f'Find route from (1, 0) to (1, 7):')
+        print('Find route from (1, 0) to (1, 7):')
         route = my_maze.findRoute(1, 0, 1, 7)
         pprint(route)
 
-        print(f'Find route from (1, 0) to (3, 8):')
+        print('Find route from (1, 0) to (3, 8):')
         route = my_maze.findRoute(1, 0, 3, 8)
         pprint(route)
 
-        print(f'Find route from (1, 0) to (7, 7):')
+        print('Find route from (1, 0) to (7, 7):')
         route = my_maze.findRoute(1, 0, 7, 7)
         pprint(route)
 
-        print(f'Find route from (1, 0) to (1, 0):')
+        print('Find route from (1, 0) to (1, 0):')
         route = my_maze.findRoute(1, 0, 1, 0)
         pprint(route)
 
